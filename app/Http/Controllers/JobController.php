@@ -9,11 +9,22 @@ use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
-    public function index()
-    {
-        $jobs = Job::all();
-        return view('jobs.index', compact('jobs'));
+ public function index(Request $request)
+{
+    $query = Job::query();
+
+    // Kiểm tra nếu có từ khóa tìm kiếm
+    if ($request->has('search') && !empty($request->search)) {
+        $search = $request->search;
+        $query->where('name', 'like', "%{$search}%")
+              ->orWhere('description', 'like', "%{$search}%");
     }
+
+    // Lấy danh sách công việc
+    $jobs = $query->latest()->get();
+
+    return view('jobs.index', compact('jobs'));
+}
 
     public function uploadCv(Request $request, $jobId)
     {

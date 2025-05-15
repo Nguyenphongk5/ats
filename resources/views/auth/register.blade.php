@@ -1,52 +1,81 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="vi">
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đăng ký</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body class="bg-light">
+    <div class="min-vh-100 d-flex align-items-center justify-content-center" style="background: linear-gradient(to right, #bfdbfe, #ffffff);">
+        <div class="card shadow-sm p-4" style="max-width: 420px; width: 100%; border-radius: 0.75rem;">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold text-primary">CMC CORP</h1>
+                <p class="text-secondary">Tạo tài khoản để tiếp cận cơ hội nghề nghiệp tốt nhất</p>
+            </div>
+
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <!-- Name -->
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-semibold text-dark">{{ __('Name') }}</label>
+                    <input id="name" type="text" name="name" required autofocus autocomplete="name"
+                        value="{{ old('name') }}"
+                        class="form-control @error('name') is-invalid @enderror" />
+                    @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Email Address -->
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold text-dark">{{ __('Email') }}</label>
+                    <input id="email" type="email" name="email" required autocomplete="username"
+                        value="{{ old('email') }}"
+                        class="form-control @error('email') is-invalid @enderror" />
+                    @error('email')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label for="password" class="form-label fw-semibold text-dark">{{ __('Password') }}</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password"
+                        class="form-control @error('password') is-invalid @enderror" />
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label for="password_confirmation" class="form-label fw-semibold text-dark">{{ __('Confirm Password') }}</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
+                        class="form-control @error('password_confirmation') is-invalid @enderror" />
+                    @error('password_confirmation')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{{ route('login') }}" class="text-primary text-decoration-none fw-semibold">
+                        {{ __('Already registered?') }}
+                    </a>
+                    <button type="submit" class="btn btn-primary fw-semibold">
+                        {{ __('Register') }}
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+</html>

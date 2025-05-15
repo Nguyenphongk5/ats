@@ -21,7 +21,7 @@
         <button type="submit" class="btn btn-primary" onclick="return confirm('Bạn đã nộp CV thành công')">Nộp CV</button>
     </form>
 
-    <div class="mt-4">
+    {{-- <div class="mt-4">
         <h5>CV bạn đã nộp:</h5>
         <ul class="list-group">
             @forelse ($job->cvs as $cv)
@@ -33,6 +33,6 @@
                 <li class="list-group-item text-muted">Bạn chưa nộp CV cho công việc này.</li>
             @endforelse
         </ul>
-    </div>
+    </div> --}}
 </div>
 @endsection

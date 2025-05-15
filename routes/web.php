@@ -7,14 +7,14 @@ use App\Http\Controllers\CvController;
 use App\Http\Controllers\ApplyController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 Route::get('/profile', function () {
     return view('profile.edit');
 })->name('profile.edit');
-Route::get('/dashboard', function () {
-    return view('dashboard'); // file resources/views/dashboard.blade.php
-})->name('views.dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard'); // file resources/views/dashboard.blade.php
+// })->name('views.dashboard');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -41,6 +41,8 @@ Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create'
 Route::post('/jobs/store-job', [JobController::class, 'storeJob'])->name('jobs.storeJob');
 Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store'); // upload CV
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
+Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+
 
 
 // Route::prefix('admin')->middleware('auth', 'admin')->group(function () {

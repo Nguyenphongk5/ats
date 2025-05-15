@@ -2,8 +2,16 @@
 
 @section('content')
     <div class="container py-5">
-        <h1 class="text-center mb-5">Danh sách công việc</h1>
-        <a href="{{ route('jobs.create') }}" class="btn btn-success mb-4">+ Thêm công việc mới</a>
+<h1 class="text-center mb-5 fw-bold display-6">Danh sách công việc</h1>
+
+        <form action="{{ route('jobs.index') }}" method="GET" class="mb-4">
+    <div class="input-group "x>
+        <input  type="text" name="search" class="form-control" placeholder="Tìm kiếm công việc..." value="{{ request('search') }}">
+        <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+    </div>
+</form>
+
+        <a href="{{ route('jobs.create') }}" class="btn btn-success mb-4">+ Add Jobs</a>
 
         <div class="row">
             @foreach($jobs as $job)
@@ -16,13 +24,13 @@
 
 
                             {{-- <p class="card-text">{{ $job->description }}</p> --}}
-                            <p class="text-muted">Từ {{ $job->open_date }} đến {{ $job->close_date }}</p>
+                            <p class="text-muted">Thời gian ứng tuyển:  {{ $job->open_date }} đến {{ $job->close_date }}</p>
                             <form action="{{ route('jobs.uploadCv', $job->id) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 {{-- <div class="mb-3">
                                     <input type="file" name="cv" class="form-control" required>
                                 </div> --}}
-                                <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-info">Xem chi tiết</a>
+                                <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-info">View</a>
 
                             </form>
                             <form id="upload-form-{{ $job->id }}" action="{{ route('jobs.uploadCv', $job->id) }}" method="POST"
