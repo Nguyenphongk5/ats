@@ -2,40 +2,52 @@
 
 @section('content')
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-2xl text-gray-900 leading-tight text-center md:text-left">
             {{ __('Hệ thống quản lý tuyển dụng') }}
         </h2>
     </x-slot>
 
-    <div class="py-12 bg-gray-100">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+    <div class="py-12 bg-gray-50 min-h-screen">
 
-            <div class="bg-white p-6 rounded-lg shadow">
-                <h3 class="text-3xl font-bold mb-4 text-gray-900">🎯 Chào mừng bạn đến với hệ thống ATS</h3>
-                <p class="text-gray-700 text-lg">
-                    Quản lý tuyển dụng, theo dõi hồ sơ và giúp bạn tối ưu quy trình tuyển dụng.
-                </p>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+
+             <div class="bg-white p-8 rounded-xl shadow-md">
+                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">📊 Thống kê hệ thống</h3>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+                    <div class="p-6 bg-indigo-100 rounded-lg shadow-inner">
+                        <p class="text-4xl font-extrabold text-indigo-700">{{ $stats['total_cvs'] ?? 0 }}</p>
+                        <p class="mt-2 text-lg font-medium text-indigo-600">Tổng số CV</p>
+                    </div>
+                    <div class="p-6 bg-blue-100 rounded-lg shadow-inner">
+                        <p class="text-4xl font-extrabold text-blue-700">{{ $stats['total_jobs'] ?? 0 }}</p>
+                        <p class="mt-2 text-lg font-medium text-blue-600">Tổng số công việc</p>
+                    </div>
+                    <div class="p-6 bg-green-100 rounded-lg shadow-inner">
+                        <p class="text-4xl font-extrabold text-green-700">{{ $stats['total_applicants'] ?? 0 }}</p>
+                        <p class="mt-2 text-lg font-medium text-green-600">Tổng số ứng viên</p>
+                    </div>
+                </div>
             </div>
+            {{-- Hàng 1: Danh sách CV --}}
+            <a href="{{ url('/cv') }}" class="block bg-indigo-600 hover:bg-indigo-700 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                <h3 class="text-3xl font-bold mb-2">📄 Danh sách CV</h3>
+                <p class="text-white/90 text-lg">Xem và quản lý các hồ sơ ứng viên đã gửi.</p>
+            </a>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <a href="/cv" class="block bg-indigo-700 hover:bg-indigo-800 text-black p-6 rounded-xl shadow-lg transition duration-200">
-                    <h4 class="text-xl font-bold mb-2">📄 Danh sách CV</h4>
-                    <p class="text-base">Xem và quản lý các hồ sơ ứng viên đã gửi.</p>
-                </a>
-                <a href="/jobs" class="block bg-blue-700 hover:bg-blue-800 text-black p-6 rounded-xl shadow-lg transition duration-200">
-                    <h4 class="text-xl font-bold mb-2">📝 Danh sách Job</h4>
-                    <p class="text-base">Theo dõi các vị trí đang tuyển dụng.</p>
-                </a>
-                <a href="/apply" class="block bg-green-700 hover:bg-green-800 text-black p-6 rounded-xl shadow-lg transition duration-200">
-                    <h4 class="text-xl font-bold mb-2">📬 Nộp CV</h4>
-                    <p class="text-base">Ứng viên có thể gửi hồ sơ ứng tuyển tại đây.</p>
-                </a>
-            </div>
+            {{-- Hàng 2: Danh sách Job --}}
+            <a href="{{ url('/jobs') }}" class="block bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                <h3 class="text-3xl font-bold mb-2">📝 Danh sách Job</h3>
+                <p class="text-white/90 text-lg">Theo dõi các vị trí đang tuyển dụng.</p>
+            </a>
 
-            {{-- <div class="mt-6 text-sm text-gray-600">
-                Bạn đã đăng nhập với tài khoản: <strong>{{ Auth::user()->email }}</strong>
-            </div> --}}
+            {{-- Hàng 3: Nộp CV --}}
+            <a href="{{ url('/apply') }}" class="block bg-green-600 hover:bg-green-700 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+                <h3 class="text-3xl font-bold mb-2">📬 Nộp CV</h3>
+                <p class="text-white/90 text-lg">Ứng viên có thể gửi hồ sơ ứng tuyển tại đây.</p>
+            </a>
 
+            
 
 
         </div>

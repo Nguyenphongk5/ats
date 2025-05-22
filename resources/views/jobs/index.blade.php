@@ -1,60 +1,24 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-5">
-<h1 class="text-center mb-5 fw-bold display-6">Danh sách công việc</h1>
+<div class="py-12 bg-gray-100">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-        <form action="{{ route('jobs.index') }}" method="GET" class="mb-4">
-    <div class="input-group "x>
-        <input  type="text" name="search" class="form-control" placeholder="Tìm kiếm công việc..." value="{{ request('search') }}">
-        <button class="btn btn-primary" type="submit">Tìm kiếm</button>
-    </div>
-</form>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-3xl font-bold mb-4 text-gray-900">📝 Chọn công ty để xem Job</h3>
 
-        <a href="{{ route('jobs.create') }}" class="btn btn-success mb-4">+ Add Jobs</a>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @foreach($companies as $company)
+                    <a href="{{ url('/jobs/company/' . $company->id) }}"
+                       class="block bg-blue-100 hover:bg-blue-200 p-6 rounded-xl shadow text-center transition duration-200">
+                        <h4 class="text-xl font-bold text-blue-800">{{ $company->name }}</h4>
+                     <span class="text-sm text-gray-600">({{ $company->jobs_count }} jobs)</span>
+                    </a>
 
-        <div class="row">
-            @foreach($jobs as $job)
-                <div class="col-md-4 mb-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h2 class="card-title fw-bold fs-4">
-                                <a href="{{ route('jobs.show', $job->id) }}">{{ $job->name }}</a>
-                            </h2>
-
-
-                            {{-- <p class="card-text">{{ $job->description }}</p> --}}
-                            <p class="text-muted">Thời gian ứng tuyển:  {{ $job->open_date }} đến {{ $job->close_date }}</p>
-                            <form action="{{ route('jobs.uploadCv', $job->id) }}" method="POST" enctype="multipart/form-data">
-                                @csrf
-                                {{-- <div class="mb-3">
-                                    <input type="file" name="cv" class="form-control" required>
-                                </div> --}}
-                                <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-info">View</a>
-
-                            </form>
-                            <form id="upload-form-{{ $job->id }}" action="{{ route('jobs.uploadCv', $job->id) }}" method="POST"
-                                style="display: none;">
-                                @csrf
-                            </form>
-                            {{-- @if(session('success'))
-                            <div class="alert alert-success mt-3">{{ session('success') }}</div>
-                            @endif --}}
-                            {{-- <div class="mt-3">
-                                <h6>CV đã nộp:</h6>
-                                <ul class="list-group">
-                                    @foreach($job->cvs()->where('user_id', auth()->id())->get() as $cv)
-                                        <li class="list-group-item">
-                                            <a href="{{ asset('storage/' . $cv->file_path) }}" target="_blank">CV #{{ $cv->id }}</a>
-                                            ({{ $cv->created_at->format('d/m/Y H:i') }})
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div> --}}
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
+
     </div>
+</div>
 @endsection

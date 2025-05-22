@@ -1,23 +1,39 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Job extends Model
 {
-        use HasFactory;
+    use HasFactory;
 
-    // Cho phép mass-assignment các trường này
     protected $fillable = [
-        'name',
-        'description',
-        'open_date',
-        'close_date',
+           'title',
+    'description',
+    'start_date',
+    'company_id',
+    'status',
+    'type',
+        // thêm nếu bạn có các trường khác
     ];
+
+    // Thêm cast để Laravel tự động chuyển string thành Carbon
+    protected $casts = [
+        'start_date' => 'date',
+   
+    ];
+
+    // Quan hệ với công ty
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    // Quan hệ với CV (nếu có)
     public function cvs()
     {
-
-        return $this->hasMany(\App\Models\Cv::class);
+        return $this->hasMany(Cv::class);
     }
 }

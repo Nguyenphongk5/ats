@@ -20,7 +20,10 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
          \App\Models\User::factory(10)->create(); // nếu có
-    $this->call(JobSeeder::class);
+    $this->call([
+        CompanySeeder::class,
+        JobSeeder::class,
+    ]);
     }
 
 }

@@ -7,8 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Cv extends Model
 {
     protected $fillable = [
-        'user_id',
         'job_id',
+        'user_id', // phải có nếu bạn truyền vào
+        'full_name',
+        'birth_year',
+        'last_company',
+        'last_position',
         'file_path',
     ];
 
@@ -16,4 +20,9 @@ class Cv extends Model
     {
         return $this->belongsTo(\App\Models\Job::class);
     }
+    public function notes()
+{
+    return $this->hasMany(CvNote::class);
+}
+
 }

@@ -42,6 +42,7 @@ Route::post('/jobs/store-job', [JobController::class, 'storeJob'])->name('jobs.s
 Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store'); // upload CV
 Route::get('/jobs/{id}', [JobController::class, 'show'])->name('jobs.show');
 Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+Route::get('/jobs/company/{company}', [JobController::class, 'jobsByCompany']);
 
 
 
@@ -53,3 +54,27 @@ Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
 //     Route::put('jobs/{job}', [JobController::class, 'update'])->name('admin.jobs.update');
 //     Route::delete('jobs/{job}', [JobController::class, 'destroy'])->name('admin.jobs.destroy');
 // });
+
+
+// Route::prefix('companies/{company}')->group(function () {
+//     Route::get('jobs/open', [JobController::class, 'openJobs'])->name('jobs.open');
+//     Route::get('jobs/closed', [JobController::class, 'closedJobs'])->name('jobs.closed');
+// });
+// Hiển thị job đang mở theo loại (quản lý, chuyên viên)
+// Route::get('/companies/{company}/jobs/open', [JobController::class, 'showOpenJobs'])->name('jobs.open');
+
+// // Hiển thị job đã đóng theo loại (quản lý, chuyên viên)
+// Route::get('/companies/{company}/jobs/closed', [JobController::class, 'showClosedJobs'])->name('jobs.closed');
+Route::get('/companies/{company}/jobs/open', [JobController::class, 'showOpen'])->name('jobs.open');
+Route::get('/companies/{company}/jobs/closed', [JobController::class, 'showClosed'])->name('jobs.closed');
+
+Route::get('/jobs/{job}/apply', [CvController::class, 'apply'])->name('jobs.apply');
+
+Route::get('/jobs/{job}/apply', [CvController::class, 'applyForm'])->name('jobs.applyForm');
+
+Route::post('/jobs/{job}/apply', [CvController::class, 'submitApplication'])->name('jobs.apply');
+Route::post('/jobs/{jobs}/apply', [CvController::class, 'submitApplication'])->name('jobs.submitApplication');
+// web.php
+Route::get('/cv/{id}/view', [CvController::class, 'view'])->name('cv.view');
+Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNote');
+Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNote');

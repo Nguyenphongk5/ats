@@ -13,14 +13,14 @@ return new class extends Migration
 {
     Schema::create('jobs', function (Blueprint $table) {
 
-    $table->id();
-    $table->string('name');
-    $table->text('description');
-    $table->date('open_date');
-    $table->date('close_date');
-    $table->unsignedBigInteger('user_id')->nullable();
-    $table->foreign('user_id')->references('id')->on('users');
-    $table->timestamps();
+          $table->id();
+        $table->string('title');
+        $table->text('description')->nullable();
+        $table->date('start_date')->nullable();
+        $table->enum('status', ['open', 'closed'])->default('open');
+        $table->enum('type', ['manager', 'specialist'])->default('specialist');
+        $table->foreignId('company_id')->constrained()->onDelete('cascade');
+        $table->timestamps();
     });
 }
 

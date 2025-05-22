@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cv;
+use App\Models\CvNote;
+use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,40 +12,78 @@ class CvController extends Controller
 {
     public function index()
     {
-         $cvs = Cv::with('job')->get();
+        $cvs = Cv::with('job')->orderBy('created_at', 'desc')->get();
+        $cvsGrouped = $cvs->groupBy('job_id');
 
-    // Nhóm CV theo job_id, nếu job_id null thì nhóm vào 0
-    $cvsGrouped = $cvs->groupBy(fn($cv) => $cv->job?->id ?? 0);
-
-    return view('cv.index', compact('cvsGrouped'));
+        return view('cv.index', compact('cvsGrouped'));
     }
 
-    public function show($id)
+    // Hiển thị form nộp đơn ứng tuyển
+    public function applyForm($jobId)
     {
-        $cv = Cv::with('job')->findOrFail($id);
-        return view('cv.show', compact('cv'));
+        $job = Job::findOrFail($jobId);
+        return view('jobs.apply', compact('job'));
     }
 
-    public function store(Request $request)
+    // Xử lý submit đơn ứng tuyển
+    public function submitApplication(Request $request, $jobId)
     {
-        try {
-            $request->validate([
-                'cv' => 'required|mimes:pdf,doc,docx,png,jpg,jpeg|max:5120',
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            dd($e->errors());
-        }
-
-
-        $file = $request->file('cv');
-        $path = $file->store('cvs', 'public');
-
-        Cv::create([
-            'user_id' => Auth::id(),
-            'job_id' => null, // Không cần chọn job
-            'file_path' => $path,
+        $request->validate([
+           'full_name' => 'required|string|max:255',
+    'birth_year' => 'required|integer|between:1900,2100',
+    'last_company' => 'nullable|string|max:255',
+    'last_position' => 'nullable|string|max:255',
+    'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
-        return redirect()->route('cv.index')->with('success', 'Tải CV thành công!');
+        $job = Job::findOrFail($jobId);
+
+        // Lưu file CV lên storage/app/public/cvs
+        $filePath = $request->file('cv')->store('cvs', 'public');
+
+        // Tạo record CV
+        Cv::create([
+            'job_id' => $job->id,
+            'user_id' => Auth::id(), // thêm dòng này
+            'full_name' => $request->full_name,
+            'birth_year' => $request->birth_year,
+            'last_company' => $request->last_company,
+            'last_position' => $request->last_position,
+            'file_path' => $filePath,
+        ]);
+
+        return redirect()->route('cv.index')->with('success', 'Nộp đơn thành công!');
     }
+
+    // Hiển thị danh sách CV đã nộp
+    public function listCVs()
+    {
+        $cvs = Cv::with('job')->orderBy('created_at', 'desc')->get();
+
+        // Nhóm theo job_id
+        $cvsGrouped = $cvs->groupBy('job_id');
+
+        return view('cv.index', compact('cvsGrouped'));
+    }
+    public function view($id)
+{
+    $cv = Cv::findOrFail($id);
+    return view('cv.view', compact('cv'));
+}
+
+public function saveNote(Request $request, $id)
+{
+    $request->validate([
+        'note' => 'required|string|max:1000',
+    ]);
+
+    CvNote::create([
+        'cv_id' => $id,
+        'note' => $request->note,
+    ]);
+
+    return back()->with('success', 'Ghi chú đã được lưu.');
+}
+
+    
 }
