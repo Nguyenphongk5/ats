@@ -12,7 +12,7 @@
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
 
              <div class="bg-white p-8 rounded-xl shadow-md">
-                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">📊 Thống kê hệ thống</h3>
+                <h3 class="text-2xl font-bold mb-6 text-gray-800 text-center">📊 Status</h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                     <div class="p-6 bg-indigo-100 rounded-lg shadow-inner">
@@ -29,25 +29,25 @@
                     </div>
                 </div>
             </div>
-            {{-- Hàng 1: Danh sách CV --}}
+            {{-- Hàng 1: List CV --}}
             <a href="{{ url('/cv') }}" class="block bg-indigo-600 hover:bg-indigo-700 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-                <h3 class="text-3xl font-bold mb-2">📄 Danh sách CV</h3>
+                <h3 class="text-3xl font-bold mb-2">📄 List CV</h3>
                 <p class="text-white/90 text-lg">Xem và quản lý các hồ sơ ứng viên đã gửi.</p>
             </a>
 
-            {{-- Hàng 2: Danh sách Job --}}
+            {{-- Hàng 2: List Job --}}
             <a href="{{ url('/jobs') }}" class="block bg-blue-600 hover:bg-blue-700 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-                <h3 class="text-3xl font-bold mb-2">📝 Danh sách Job</h3>
+                <h3 class="text-3xl font-bold mb-2">📝 List Job</h3>
                 <p class="text-white/90 text-lg">Theo dõi các vị trí đang tuyển dụng.</p>
             </a>
 
             {{-- Hàng 3: Nộp CV --}}
             <a href="{{ url('/apply') }}" class="block bg-green-600 hover:bg-green-700 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
-                <h3 class="text-3xl font-bold mb-2">📬 Nộp CV</h3>
+                <h3 class="text-3xl font-bold mb-2">📬 Add CV</h3>
                 <p class="text-white/90 text-lg">Ứng viên có thể gửi hồ sơ ứng tuyển tại đây.</p>
             </a>
 
-            
+
 
 
         </div>

@@ -1,11 +1,18 @@
 <?php
 
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\ApplyController;
 
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+Route::get('/contact', [ContactController::class, 'showForm'])->name('contact');
+Route::post('/contact', [ContactController::class, 'sendContact'])->name('contact');
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -21,16 +28,32 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
-    Route::post('/jobs/{job}/upload-cv', [JobController::class, 'uploadCv'])->name('jobs.uploadCv');
-    Route::get('/cv', [CvController::class, 'index'])->name('cv.index');
-    Route::get('/cv/{id}', [CvController::class, 'show'])->name('cv.show');
-    Route::post('/cv', [CvController::class, 'store'])->name('cv.store');
-    Route::get('/apply', [ApplyController::class, 'index'])->name('apply.index');
+    // Profile routes
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
+
+    // Job routes
+    Route::prefix('jobs')->group(function () {
+        Route::get('/', [JobController::class, 'index'])->name('jobs.index');
+        Route::post('/{job}/upload-cv', [JobController::class, 'uploadCv'])->name('jobs.uploadCv');
+    });
+
+    // CV routes
+    Route::prefix('cv')->group(function () {
+        Route::get('/', [CvController::class, 'index'])->name('cv.index');
+        Route::get('/{id}', [CvController::class, 'show'])->name('cv.show');
+        Route::post('/', [CvController::class, 'store'])->name('cv.store');
+    });
+
+    // Apply routes
+    Route::prefix('apply')->group(function () {
+        Route::get('/', [ApplyController::class, 'index'])->name('apply.index');
+    });
 });
+
 
 require __DIR__.'/auth.php';
 
@@ -78,3 +101,8 @@ Route::post('/jobs/{jobs}/apply', [CvController::class, 'submitApplication'])->n
 Route::get('/cv/{id}/view', [CvController::class, 'view'])->name('cv.view');
 Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNote');
 Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNote');
+
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
