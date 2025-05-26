@@ -46,6 +46,11 @@
                 <h3 class="text-3xl font-bold mb-2">📬 Add CV</h3>
                 <p class="text-white/90 text-lg">Ứng viên có thể gửi hồ sơ ứng tuyển tại đây.</p>
             </a>
+            {{-- Hàng 4: Pool --}}
+<a href="{{ url('/pool') }}" class="block bg-yellow-500 hover:bg-yellow-600 text-white p-8 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+    <h3 class="text-3xl font-bold mb-2">📁 Pool</h3>
+    <p class="text-white/90 text-lg">Quản lý danh sách ứng viên tiềm năng.</p>
+</a>
 
 
 

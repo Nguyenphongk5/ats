@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\ApplyController;
+use Illuminate\Container\Attributes\Auth;
 
 Route::get('/about', function () {
     return view('about');
@@ -16,6 +17,9 @@ Route::post('/contact', [ContactController::class, 'sendContact'])->name('contac
 Route::get('/', function () {
     return redirect()->route('login');
 });
+
+
+
 Route::get('/profile', function () {
     return view('profile.edit');
 })->name('profile.edit');
@@ -69,24 +73,7 @@ Route::get('/jobs/company/{company}', [JobController::class, 'jobsByCompany']);
 
 
 
-// Route::prefix('admin')->middleware('auth', 'admin')->group(function () {
-//     Route::get('jobs', [JobController::class, 'index'])->name('admin.jobs.index');
-//     Route::get('jobs/create', [JobController::class, 'create'])->name('admin.jobs.create');
-//     Route::post('jobs', [JobController::class, 'store'])->name('admin.jobs.store');
-//     Route::get('jobs/{job}/edit', [JobController::class, 'edit'])->name('admin.jobs.edit');
-//     Route::put('jobs/{job}', [JobController::class, 'update'])->name('admin.jobs.update');
-//     Route::delete('jobs/{job}', [JobController::class, 'destroy'])->name('admin.jobs.destroy');
-// });
 
-
-// Route::prefix('companies/{company}')->group(function () {
-//     Route::get('jobs/open', [JobController::class, 'openJobs'])->name('jobs.open');
-//     Route::get('jobs/closed', [JobController::class, 'closedJobs'])->name('jobs.closed');
-// });
-// Hiển thị job đang mở theo loại (quản lý, chuyên viên)
-// Route::get('/companies/{company}/jobs/open', [JobController::class, 'showOpenJobs'])->name('jobs.open');
-
-// // Hiển thị job đã đóng theo loại (quản lý, chuyên viên)
 // Route::get('/companies/{company}/jobs/closed', [JobController::class, 'showClosedJobs'])->name('jobs.closed');
 Route::get('/companies/{company}/jobs/open', [JobController::class, 'showOpen'])->name('jobs.open');
 Route::get('/companies/{company}/jobs/closed', [JobController::class, 'showClosed'])->name('jobs.closed');
@@ -106,3 +93,23 @@ Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNo
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
+
+    Route::get('/pool', [\App\Http\Controllers\PoolController::class, 'index']);
+use App\Http\Controllers\PoolController;
+
+Route::get('/pool/cxo/{id}', [PoolController::class, 'showCxo'])->name('pool.cxo.show');
+
+
+Route::get('/pool/function', [PoolController::class, 'functionList'])->name('pool.function');
+// routes/web.php
+Route::post('/cvs/{cv}/qualify', [CvController::class, 'qualify'])->name('cvs.qualify');
+Route::get('/job/{id}/qualified-count', function ($id) {
+    $count = \App\Models\Cv::where('job_id', $id)->where('qualified', 1)->count();
+    return response()->json(['count' => $count]);
+});
+Route::post('/cvs/{cv}/interview1', [JobController::class, 'markInterview1'])->name('cvs.interview1');
+
+Route::post('/cv/{cv}/interview1', [JobController::class, 'markInterview1'])->name('cv.interview1');
+Route::post('/cv/{cv}/interview2', [JobController::class, 'markInterview2'])->name('cv.interview2');
+Route::post('/cv/{cv}/offer', [JobController::class, 'markOffer'])->name('cv.offer');
+Route::post('/cv/{cv}/hand', [JobController::class, 'markHand'])->name('cv.hand');

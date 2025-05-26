@@ -22,3 +22,41 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Code JS của bạn ở đây
+    document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.qualify-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const cvId = this.dataset.cvId;
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            fetch(`/cvs/${cvId}/qualify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token,
+                },
+                body: JSON.stringify({})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    this.disabled = true;
+                    alert('Đã đánh dấu qualify!');
+
+                    // Nếu muốn update số lượng qualified trên trang job:
+                    // Ví dụ bạn có 1 span hiển thị số lượng, thì update nó ở đây
+                    // document.querySelector('#qualifiedCountSpan').textContent = data.qualifiedCount;
+                } else {
+                    alert('Có lỗi xảy ra, thử lại!');
+                }
+            })
+            .catch(() => alert('Lỗi kết nối!'));
+        });
+    });
+});
+
+</script>
+@endpush

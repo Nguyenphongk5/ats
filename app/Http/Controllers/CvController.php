@@ -85,5 +85,23 @@ public function saveNote(Request $request, $id)
     return back()->with('success', 'Ghi chú đã được lưu.');
 }
 
-    
+
+ public function qualify(Cv $cv)
+{
+    if (!$cv->qualified) {
+        $cv->qualified = true;
+        $cv->save();
+
+        // Tăng qualified_count ở job tương ứng
+        $cv->job->increment('qualified_count');  // dùng quan hệ job
+        $cv->job->refresh(); // load lại dữ liệu mới
+    }
+
+    return response()->json([
+        'success' => true,
+        'qualifiedCount' => $cv->job->qualified_count
+    ]);
 }
+  
+}
+
