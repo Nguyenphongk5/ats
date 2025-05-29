@@ -1,35 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h2 class="mb-4 text-center">Thống kê ứng viên</h2>
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h2 class="text-center mb-4 text-primary fw-bold">📊 Thống kê ứng viên theo giai đoạn</h2>
 
-    <form method="GET" action="{{ route('candidates.index') }}" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <label for="month" class="form-label">Chọn tháng:</label>
-            <input type="month" id="month" name="month" class="form-control" value="{{ request('month') }}">
-        </div>
-        <div class="col-md-4">
-            <label for="filter_field" class="form-label">Lọc theo giai đoạn:</label>
-            <select name="filter_field" id="filter_field" class="form-select">
-                <option value="created_at" {{ request('filter_field') == 'created_at' ? 'selected' : '' }}>Ứng tuyển (Apply)</option>
-                <option value="qualify_date" {{ request('filter_field') == 'qualify_date' ? 'selected' : '' }}>Đạt yêu cầu</option>
-                <option value="interview1_date" {{ request('filter_field') == 'interview1_date' ? 'selected' : '' }}>Phỏng vấn 1</option>
-                <option value="interview2_date" {{ request('filter_field') == 'interview2_date' ? 'selected' : '' }}>Phỏng vấn 2</option>
-                <option value="offer_date" {{ request('filter_field') == 'offer_date' ? 'selected' : '' }}>Offer</option>
-                <option value="hand_date" {{ request('filter_field') == 'hand_date' ? 'selected' : '' }}>Nhận việc</option>
-            </select>
-        </div>
-        <div class="col-md-2 align-self-end">
-            <button type="submit" class="btn btn-primary w-100">Lọc</button>
-        </div>
-    </form>
+            <form method="GET" action="{{ route('candidates.index') }}" class="row g-3 justify-content-center mb-4">
+                <div class="col-md-4">
+                    <label for="month" class="form-label">📅 Chọn tháng</label>
+                    <input type="month" id="month" name="month" class="form-control" value="{{ request('month') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="filter_field" class="form-label">🔍 Lọc theo giai đoạn</label>
+                    <select name="filter_field" id="filter_field" class="form-select">
+                        <option value="created_at" {{ request('filter_field') == 'created_at' ? 'selected' : '' }}>Ứng tuyển (Apply)</option>
+                        <option value="qualify_date" {{ request('filter_field') == 'qualify_date' ? 'selected' : '' }}>Đạt yêu cầu</option>
+                        <option value="interview1_date" {{ request('filter_field') == 'interview1_date' ? 'selected' : '' }}>Phỏng vấn 1</option>
+                        <option value="interview2_date" {{ request('filter_field') == 'interview2_date' ? 'selected' : '' }}>Phỏng vấn 2</option>
+                        <option value="offer_date" {{ request('filter_field') == 'offer_date' ? 'selected' : '' }}>Offer</option>
+                        <option value="hand_date" {{ request('filter_field') == 'hand_date' ? 'selected' : '' }}>Nhận việc</option>
+                    </select>
+                </div>
+                <div class="col-md-2 align-self-end">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel-fill me-1"></i> Lọc</button>
+                </div>
+            </form>
 
-    <h5 class="text-center mt-5 mb-3">Biểu đồ số lượng ứng viên theo từng giai đoạn (12 tháng)</h5>
-    <canvas id="candidateChart" height="100"></canvas>
+            <div class="mt-4">
+                <h5 class="text-center text-secondary mb-3">📈 Biểu đồ ứng viên theo từng giai đoạn (12 tháng)</h5>
+                <canvas id="candidateChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
-<br>
-<br>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -96,18 +100,48 @@
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'top'
+                    position: 'top',
+                    labels: {
+                        font: {
+                            size: 13
+                        }
+                    }
                 },
                 title: {
-                    display: true,
-                    text: 'Biểu đồ ứng viên theo từng giai đoạn (12 tháng)'
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
                 }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
             },
             scales: {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1
+                        stepSize: 1,
+                        font: {
+                            size: 12
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Số lượng',
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: {
+                            size: 12
+                        }
                     }
                 }
             }
