@@ -1,11 +1,154 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-5">
+
+
 
     <h2 class="mb-4 fw-bold text-primary pb-2" style="font-size: 2rem; border-bottom: none;">
         Chi tiết CV của {{ $cv->full_name ?? 'Ứng viên' }}
     </h2>
+    {{-- <div class="mb-3">
+        <a href="{{ route('cv.chart') }}" class="btn btn-secondary">Quay lại biểu đồ</a>
+    </div> --}}
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+
+    {{-- Mỗi hành động là 1 "card" nhỏ --}}
+  <div class="container px-0">
+    <div class="row g-3">
+
+        {{-- Apply --}}
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-3">
+                    <h6 class="card-title text-muted small mb-2">Apply</h6>
+                    <input type="date"
+                        class="form-control form-control-sm mb-2"
+                        value="{{ $cv->created_at ? \Carbon\Carbon::parse($cv->created_at)->format('Y-m-d') : '' }}"
+                        readonly>
+                    <button class="btn btn-outline-primary btn-sm w-100 rounded-pill" disabled>
+                        <i class="bi bi-upload"></i> Applied
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Qualify --}}
+        <div class="col-md-4">
+            <form action="{{ route('cv.qualify', $cv->id) }}" method="POST">
+                @csrf
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-muted small mb-2">Qualify</h6>
+                        <input type="date" name="qualify_date"
+                            class="form-control form-control-sm mb-2"
+                            value="{{ $cv->qualify_date ? \Carbon\Carbon::parse($cv->qualify_date)->format('Y-m-d') : '' }}"
+                            {{ $cv->qualified ? 'readonly' : '' }}
+                            required>
+                        <button type="submit"
+                            class="btn btn-sm w-100 rounded-pill {{ $cv->qualified ? 'btn-success text-white' : 'btn-outline-success' }}"
+                            {{ $cv->qualified ? 'disabled' : '' }}>
+                            Qualify
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {{-- Phỏng vấn 1 --}}
+        <div class="col-md-4">
+            <form action="{{ route('cv.interview1', $cv->id) }}" method="POST">
+                @csrf
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-muted small mb-2">Phỏng vấn 1</h6>
+                        <input type="date" name="interview1_date"
+                            class="form-control form-control-sm mb-2"
+                            value="{{ $cv->interview1_date ? \Carbon\Carbon::parse($cv->interview1_date)->format('Y-m-d') : '' }}"
+                            {{ $cv->interview1 ? 'readonly' : '' }}
+                            required>
+                        <button type="submit"
+                            class="btn btn-sm w-100 rounded-pill {{ $cv->interview1 ? 'btn-warning text-white' : 'btn-outline-warning' }}"
+                            {{ $cv->interview1 ? 'disabled' : '' }}>
+                            Phỏng vấn 1
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {{-- Phỏng vấn 2 --}}
+        <div class="col-md-4">
+            <form action="{{ route('cv.interview2', $cv->id) }}" method="POST">
+                @csrf
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-muted small mb-2">Phỏng vấn 2</h6>
+                        <input type="date" name="interview2_date"
+                            class="form-control form-control-sm mb-2"
+                            value="{{ $cv->interview2_date ? \Carbon\Carbon::parse($cv->interview2_date)->format('Y-m-d') : '' }}"
+                            {{ $cv->interview2 ? 'readonly' : '' }}
+                            required>
+                        <button type="submit"
+                            class="btn btn-sm w-100 rounded-pill {{ $cv->interview2 ? 'btn-info text-white' : 'btn-outline-info' }}"
+                            {{ $cv->interview2 ? 'disabled' : '' }}>
+                            Phỏng vấn 2
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {{-- Offer --}}
+        <div class="col-md-4">
+            <form action="{{ route('cv.offer', $cv->id) }}" method="POST">
+                @csrf
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-muted small mb-2">Offer</h6>
+                        <input type="date" name="offer_date"
+                            class="form-control form-control-sm mb-2"
+                            value="{{ $cv->offer_date ? \Carbon\Carbon::parse($cv->offer_date)->format('Y-m-d') : '' }}"
+                            {{ $cv->offer ? 'readonly' : '' }}
+                            required>
+                        <button type="submit"
+                            class="btn btn-sm w-100 rounded-pill {{ $cv->offer ? 'btn-primary text-white' : 'btn-outline-primary' }}"
+                            {{ $cv->offer ? 'disabled' : '' }}>
+                            Offer
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {{-- Hand --}}
+        <div class="col-md-4">
+            <form action="{{ route('cv.hand', $cv->id) }}" method="POST">
+                @csrf
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-3">
+                        <h6 class="card-title text-muted small mb-2">Hand</h6>
+                        <input type="date" name="hand_date"
+                            class="form-control form-control-sm mb-2"
+                            value="{{ $cv->hand_date ? \Carbon\Carbon::parse($cv->hand_date)->format('Y-m-d') : '' }}"
+                            {{ $cv->hand ? 'readonly' : '' }}
+                            required>
+                        <button type="submit"
+                            class="btn btn-sm w-100 rounded-pill {{ $cv->hand ? 'btn-dark text-white' : 'btn-outline-dark' }}"
+                            {{ $cv->hand ? 'disabled' : '' }}>
+                            Hand
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+
+</div>
 
     <div class="mb-4 p-4 rounded-4" style="max-width: 520px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #34495e; background-color: #fefefe;">
         <p class="mb-3 fs-5"><strong>Họ tên:</strong> <span class="text-dark">{{ $cv->full_name ?? 'Không có' }}</span></p>

@@ -12,121 +12,145 @@ class JobController extends Controller
 {
     public function index(Request $request)
     {
+        // Khởi tạo một query builder cho model Job
         $query = Job::query();
 
-        // Kiểm tra nếu có từ khóa tìm kiếm
+        // Kiểm tra nếu có từ khóa tìm kiếm được gửi từ request
         if ($request->has('search') && !empty($request->search)) {
             $search = $request->search;
+
+            // Thêm điều kiện lọc theo tên hoặc mô tả công việc chứa từ khóa tìm kiếm
             $query->where('name', 'like', "%{$search}%")
                 ->orWhere('description', 'like', "%{$search}%");
         }
 
-        // Lấy danh sách công việc
+        // Lấy danh sách công ty, kèm theo đếm số lượng công việc liên quan đến mỗi công ty
         $companies = Company::withCount('jobs')->get();
 
+        // Trả về view 'jobs.index' và truyền biến $companies cho view
         return view('jobs.index', compact('companies'));
     }
 
+
     public function uploadCv(Request $request, $jobId)
     {
+        // ✅ VALIDATE dữ liệu gửi từ form
         $request->validate([
-            'cv' => 'required|mimes:pdf,doc,docx|max:2048',
-            'full_name' => 'required|string|max:255',
-            'birth_year' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
-            'last_company' => 'nullable|string|max:255',
-            'last_position' => 'nullable|string|max:255',
+            'cv' => 'required|mimes:pdf,doc,docx|max:2048', // Bắt buộc có file, chỉ chấp nhận PDF/DOC/DOCX, tối đa 2MB
+            'full_name' => 'required|string|max:255',       // Họ tên bắt buộc, tối đa 255 ký tự
+            'birth_year' => 'required|digits:4|integer|min:1900|max:' . date('Y'), // Năm sinh phải là số 4 chữ số, hợp lệ
+            'last_company' => 'nullable|string|max:255',    // Công ty gần nhất (có thể bỏ qua)
+            'last_position' => 'nullable|string|max:255',   // Vị trí gần nhất (có thể bỏ qua)
         ]);
 
+        // ✅ LƯU FILE CV lên thư mục storage (disk 'public' => lưu vào storage/app/public/cvs)
         $file = $request->file('cv');
+        $path = $file->store('cvs', 'public'); // Trả về đường dẫn tương đối như: cvs/abc123.pdf
+
+        // ✅ TẠO BẢN GHI MỚI trong bảng `cvs` với thông tin ứng viên và đường dẫn file
+        Cv::create([
+            'user_id' => Auth::id(),             // ID người dùng hiện tại (đang đăng nhập)
+            'job_id' => $jobId,                  // ID của công việc đang ứng tuyển
+            'file_path' => $path,                // Đường dẫn file CV đã upload
+            'full_name' => $request->full_name,  // Họ tên
+            'birth_year' => $request->birth_year, // Năm sinh
+            'last_company' => $request->last_company, // Công ty gần nhất
+            'last_position' => $request->last_position, // Chức danh gần nhất
+        ]);
+
+        // ✅ CHUYỂN HƯỚNG về trang danh sách công việc kèm thông báo thành công
+        return redirect()->route('jobs.index')->with('success', 'Tải CV thành công!');
+    }
+
+   public function store(Request $request)
+{
+    // ✅ BƯỚC 1: Validate dữ liệu đầu vào từ form
+    $request->validate([
+        'cv' => 'required|mimes:pdf,doc,docx|max:5120', // Bắt buộc có file, đúng định dạng, tối đa 5MB
+        'job_id' => 'nullable|exists:jobs,id',           // job_id không bắt buộc, nếu có phải tồn tại trong bảng jobs
+        'full_name' => 'required|string|max:255',        // Họ tên là bắt buộc
+        'birth_year' => 'required|digits:4|integer|min:1900|max:' . date('Y'), // Năm sinh hợp lệ
+        'last_company' => 'nullable|string|max:255',     // Công ty trước đó (nếu có)
+        'last_position' => 'nullable|string|max:255',    // Chức danh trước đó (nếu có)
+    ]);
+
+    // ✅ BƯỚC 2: Kiểm tra xem người dùng có upload file CV không
+    if ($request->hasFile('cv')) {
+        $file = $request->file('cv');
+
+        // ✅ BƯỚC 3: Lưu file vào thư mục `storage/app/public/cvs`
         $path = $file->store('cvs', 'public');
 
+        // ✅ BƯỚC 4: Tạo bản ghi mới trong bảng `cvs`
         Cv::create([
-            'user_id' => Auth::id(),
-            'job_id' => $jobId,
-            'file_path' => $path,
+            'user_id' => Auth::id(),                         // Gán theo người dùng đang đăng nhập
+            'job_id' => $request->job_id ?? null,            // Có thể null nếu người dùng chỉ upload CV chứ không apply job
+            'file_path' => $path,                            // Đường dẫn tới file CV
             'full_name' => $request->full_name,
             'birth_year' => $request->birth_year,
             'last_company' => $request->last_company,
             'last_position' => $request->last_position,
         ]);
 
-        return redirect()->route('jobs.index')->with('success', 'Tải CV thành công!');
+        // ✅ BƯỚC 5: Chuyển hướng sau khi upload thành công
+        return redirect()->route('cv.index')->with('success', 'Tải CV thành công!');
+    } else {
+        // ❌ Trường hợp không có file nào được upload
+        return redirect()->back()->with('error', 'Không có file được tải lên');
     }
-    public function store(Request $request)
-    {
-        // Validate file và job_id (nếu có)
-        $request->validate([
-            'cv' => 'required|mimes:pdf,doc,docx|max:5120',
-            'job_id' => 'nullable|exists:jobs,id',
-            'full_name' => 'required|string|max:255',
-            'birth_year' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
-            'last_company' => 'nullable|string|max:255',
-            'last_position' => 'nullable|string|max:255',
-        ]);
+}
 
-        // Kiểm tra nếu file đã được upload
-        if ($request->hasFile('cv')) {
-            $file = $request->file('cv');
-
-            // Lưu file vào thư mục public/cvs
-            $path = $file->store('cvs', 'public');
-
-            // Nếu có job_id thì liên kết CV với job, nếu không thì không
-            Cv::create([
-                'user_id' => Auth::id(),
-                'job_id' => $request->job_id ?? null,
-                'file_path' => $path,
-                'full_name' => $request->full_name,
-                'birth_year' => $request->birth_year,
-                'last_company' => $request->last_company,
-                'last_position' => $request->last_position,
-            ]);
-
-            return redirect()->route('cv.index')->with('success', 'Tải CV thành công!');
-        } else {
-            return redirect()->back()->with('error', 'Không có file được tải lên');
-        }
-    }
     public function show($id)
-    {
-        $job = Job::with([
-            'cvs' => function ($query) {
-                $query->where('user_id', auth()->id());
-            }
-        ])->findOrFail($id);
+{
+    // ✅ TÌM công việc theo ID và LOAD kèm danh sách CV mà người dùng hiện tại đã nộp
+    $job = Job::with([
+        'cvs' => function ($query) {
+            // Chỉ lấy các CV do người dùng hiện tại (đã đăng nhập) nộp cho công việc này
+            $query->where('user_id', auth()->id());
+        }
+    ])->findOrFail($id); // Nếu không tìm thấy job => trả về lỗi 404
 
-        return view('jobs.show', compact('job'));
-    }
-    public function create()
-    {
-        $companies = Company::all(); // Lấy danh sách công ty để chọn
-        return view('jobs.create', compact('companies'));
-    }
+    // ✅ TRUYỀN dữ liệu job (cùng CV của người dùng – nếu có) vào view `jobs.show`
+    return view('jobs.show', compact('job'));
+}
+
+  public function create()
+{
+    // ✅ Lấy toàn bộ danh sách công ty từ DB để hiển thị trong form
+    $companies = Company::all();
+
+    // ✅ Truyền danh sách công ty vào view để hiển thị trong dropdown
+    return view('jobs.create', compact('companies'));
+}
+
 
     // Xử lý lưu công việc mới
-    public function storeJob(Request $request)
-    {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'start_date' => 'required|date',
-            'company_id' => 'required|exists:companies,id',
-            'status' => 'required|in:open,closed',
-            'type' => 'required|in:manager,specialist',
-        ]);
+   public function storeJob(Request $request)
+{
+    // ✅ BƯỚC 1: Validate dữ liệu từ form
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',           // Tiêu đề là bắt buộc
+        'description' => 'nullable|string',             // Mô tả có thể để trống
+        'start_date' => 'required|date',                // Ngày bắt đầu
+        'company_id' => 'required|exists:companies,id', // Công ty phải tồn tại
+        'status' => 'required|in:open,closed',          // Trạng thái: đang mở / đã đóng
+        'type' => 'required|in:manager,specialist',     // Loại job: quản lý / chuyên viên
+    ]);
 
-        Job::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'start_date' => $validated['start_date'],
-            'company_id' => $validated['company_id'],
-            'status' => $validated['status'],
-            'type' => $validated['type'],
-        ]);
+    // ✅ BƯỚC 2: Lưu dữ liệu vào DB
+    Job::create([
+        'title' => $validated['title'],
+        'description' => $validated['description'] ?? null,
+        'start_date' => $validated['start_date'],
+        'company_id' => $validated['company_id'],
+        'status' => $validated['status'],
+        'type' => $validated['type'],
+    ]);
 
+    // ✅ BƯỚC 3: Chuyển hướng về danh sách và thông báo thành công
+    return redirect()->route('jobs.index')->with('success', 'Thêm công việc thành công!');
+}
 
-        return redirect()->route('jobs.index')->with('success', 'Thêm công việc thành công!');
-    }
 
     public function jobsByCompany($companyId)
     {
@@ -234,10 +258,8 @@ class JobController extends Controller
             $cv->job->refresh();
         }
 
-        return response()->json([
-            'success' => true,
-            'qualifiedCount' => $cv->job->qualified_count,
-        ]);
+        return redirect()->back()->with('success', 'Ứng viên đã được đánh dấu là đủ điều kiện.');
+
     }
     public function markInterview1(Cv $cv)
     {
@@ -276,18 +298,16 @@ class JobController extends Controller
         return redirect()->back()->with('success', 'Ứng viên đã được đánh dấu là đã nhận Offer.');
     }
 
-   public function markHand(Cv $cv)
-{
-    if (!$cv->hand) {
-        $cv->hand = true;
-        $cv->save();
+    public function markHand(Cv $cv)
+    {
+        if (!$cv->hand) {
+            $cv->hand = true;
+            $cv->save();
 
-        $cv->job()->increment('hand_count');
+            $cv->job()->increment('hand_count');
+        }
+
+        return redirect()->back()->with('success', 'Ứng viên đã được đánh dấu là đã nhận việc.');
     }
-
-    return redirect()->back()->with('success', 'Ứng viên đã được đánh dấu là đã nhận việc.');
-}
-
-
 
 }

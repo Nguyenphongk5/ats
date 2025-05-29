@@ -14,7 +14,7 @@ class JobSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        foreach (range(1, 10) as $i) {
+        foreach (range(1, 5) as $i) {
 
 
             Job::create([

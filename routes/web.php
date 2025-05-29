@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\ApplyController;
+
+
 use Illuminate\Container\Attributes\Auth;
 
 Route::get('/about', function () {
@@ -59,7 +61,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 
 
@@ -94,7 +96,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware('auth')
     ->name('dashboard');
 
-    Route::get('/pool', [\App\Http\Controllers\PoolController::class, 'index']);
+Route::get('/pool', [\App\Http\Controllers\PoolController::class, 'index']);
+
 use App\Http\Controllers\PoolController;
 
 Route::get('/pool/cxo/{id}', [PoolController::class, 'showCxo'])->name('pool.cxo.show');
@@ -103,13 +106,25 @@ Route::get('/pool/cxo/{id}', [PoolController::class, 'showCxo'])->name('pool.cxo
 Route::get('/pool/function', [PoolController::class, 'functionList'])->name('pool.function');
 // routes/web.php
 Route::post('/cvs/{cv}/qualify', [CvController::class, 'qualify'])->name('cvs.qualify');
-Route::get('/job/{id}/qualified-count', function ($id) {
-    $count = \App\Models\Cv::where('job_id', $id)->where('qualified', 1)->count();
-    return response()->json(['count' => $count]);
-});
+Route::post('/cv/{cv}/qualify', [CVController::class, 'qualify'])->name('cv.qualify');
+
 Route::post('/cvs/{cv}/interview1', [JobController::class, 'markInterview1'])->name('cvs.interview1');
 
 Route::post('/cv/{cv}/interview1', [JobController::class, 'markInterview1'])->name('cv.interview1');
 Route::post('/cv/{cv}/interview2', [JobController::class, 'markInterview2'])->name('cv.interview2');
 Route::post('/cv/{cv}/offer', [JobController::class, 'markOffer'])->name('cv.offer');
 Route::post('/cv/{cv}/hand', [JobController::class, 'markHand'])->name('cv.hand');
+
+Route::post('/cv/{cv}/interview1', [CvController::class, 'markInterview1'])->name('cv.interview1');
+Route::post('/cv/{cv}/interview2', [CvController::class, 'markInterview2'])->name('cv.interview2');
+Route::post('/cv/{cv}/offer', [CvController::class, 'markOffer'])->name('cv.offer');
+Route::post('/cv/{cv}/hand', [CvController::class, 'markHand'])->name('cv.hand');
+
+Route::get('/cvs/job/{job}', [CVController::class, 'indexByJob'])->name('cv.index.job');
+
+
+
+use App\Http\Controllers\CandidateController;
+
+Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
+Route::get('/candidates/print', [CandidateController::class, 'exportPdf'])->name('candidates.pdf');
