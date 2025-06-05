@@ -38,7 +38,7 @@
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-success rounded-pill px-5 py-2 fw-bold shadow-sm">
-                            🚀 Nộp đơn ngay
+                            🚀 Add Job
                         </button>
                     </div>
                 </form>

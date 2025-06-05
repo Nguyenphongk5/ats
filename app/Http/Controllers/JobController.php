@@ -109,10 +109,41 @@ class JobController extends Controller
             $query->where('user_id', auth()->id());
         }
     ])->findOrFail($id); // Nếu không tìm thấy job => trả về lỗi 404
+         if ($job->hand_count >= $job->vacancy && $job->status !== 'closed') {
+        $job->status = 'closed';
+        $job->save();
+    }
 
     // ✅ TRUYỀN dữ liệu job (cùng CV của người dùng – nếu có) vào view `jobs.show`
     return view('jobs.show', compact('job'));
 }
+public function edit(Job $job)
+{
+    // Hiển thị form edit với dữ liệu job hiện tại
+    return view('jobs.edit', compact('job'));
+}
+
+public function update(Request $request, Job $job)
+{
+    // Validate dữ liệu
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        // Thêm các trường khác nếu có
+    ]);
+
+    // Cập nhật dữ liệu
+    $job->update([
+        'title' => $request->title,
+        'description' => $request->description,
+        // Các trường khác
+    ]);
+
+    // Chuyển hướng về trang chi tiết hoặc danh sách với thông báo
+    return redirect()->route('jobs.show', $job->id)
+                     ->with('success', 'Công việc đã được cập nhật thành công!');
+}
+
 
   public function create()
 {
@@ -309,5 +340,13 @@ class JobController extends Controller
 
         return redirect()->back()->with('success', 'Ứng viên đã được đánh dấu là đã nhận việc.');
     }
+    //  public function apply(Job $job)
+    // {
+
+    //     // Trả về view chứa form ứng tuyển, truyền biến $job sang view
+
+    //     return view('jobs.apply', compact('job'));
+    // }
+
 
 }

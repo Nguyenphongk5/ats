@@ -111,7 +111,7 @@
 </style>
 
 <div class="form-wrapper">
-  <h2 class="form-title"><i class="bi bi-pencil-square me-2"></i>Đơn Ứng Tuyển</h2>
+  <h2 class="form-title"><i class="bi bi-pencil-square me-2"></i>Add CV</h2>
 
   <form action="{{ route('jobs.store') }}" method="POST" enctype="multipart/form-data" novalidate>
     @csrf
@@ -203,7 +203,7 @@
     </div>
 
     <button type="submit" class="btn btn-submit">
-      <i class="bi bi-send-fill me-2"></i> Nộp đơn
+      <i class="bi bi-send-fill me-2"></i> Add To Job
     </button>
   </form>
 </div>

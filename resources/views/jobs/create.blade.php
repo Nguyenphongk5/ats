@@ -124,6 +124,12 @@
                     @enderror
                 </div>
 
+                <div class="mb-3">
+    <label for="vacancy" class="form-label">Số lượng cần tuyển</label>
+    <input type="number" name="vacancy" id="vacancy" class="form-control" min="1" value="{{ old('vacancy', $job->vacancy ?? 1) }}" required>
+</div>
+
+
                 {{-- Nút --}}
                 <div class="d-flex justify-content-between mt-4">
                     <a href="{{ route('jobs.index') }}" class="btn btn-outline-secondary px-4 rounded-pill">

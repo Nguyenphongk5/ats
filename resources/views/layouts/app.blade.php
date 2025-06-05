@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -104,66 +105,67 @@
             </main>
 
             <!-- Footer -->
-            <footer class="bg-gray-900 text-white py-12">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                        <!-- Company Info -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-4">CMC Technology Corporation</h3>
-                            <p class="text-gray-400 text-sm">
-                                CMC Technology Corporation is a leading global technology company, delivering innovative IT solutions and services to empower businesses and communities worldwide.
-                            </p>
-                        </div>
+           <footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-16 shadow-inner">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+            <!-- Company Info -->
+            <div>
+                <h3 class="text-2xl font-bold mb-4 text-white tracking-wide">CMC Technology Corporation</h3>
+                <p class="text-gray-400 leading-relaxed text-sm">
+                    A global leader in technology and innovation. We craft digital solutions that power industries, enhance lives, and shape the future.
+                </p>
+            </div>
 
-                        <!-- Quick Links -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                            <ul class="space-y-2">
-                                <li><a href="/dashboard" class="text-gray-400 hover:text-white transition">Home</a></li>
-                                <li><a href="/cv" class="text-gray-400 hover:text-white transition">CV</a></li>
-                                <li><a href="/admin/jobs" class="text-gray-400 hover:text-white transition">Jobs</a></li>
-                                <li><a href="/apply" class="text-gray-400 hover:text-white transition">Apply</a></li>
-                            </ul>
-                        </div>
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4 text-white">Quick Links</h3>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="/dashboard" class="text-gray-400 hover:text-blue-400 transition duration-300 ease-in-out">🏠 Home</a></li>
+                    <li><a href="/cv" class="text-gray-400 hover:text-blue-400 transition duration-300 ease-in-out">📄 CV</a></li>
+                    <li><a href="/admin/jobs" class="text-gray-400 hover:text-blue-400 transition duration-300 ease-in-out">💼 Jobs</a></li>
+                    <li><a href="/apply" class="text-gray-400 hover:text-blue-400 transition duration-300 ease-in-out">📝 Apply</a></li>
+                </ul>
+            </div>
 
-                        <!-- Contact Info -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
-                            <ul class="space-y-2 text-gray-400 text-sm">
-                                <li><i class="fas fa-map-marker-alt mr-2"></i> CMC Tower, Hanoi, Vietnam</li>
-                                <li><i class="fas fa-phone-alt mr-2"></i> +84 123 456 789</li>
-                                <li><i class="fas fa-envelope mr-2"></i> info@cmcglobal.com</li>
-                            </ul>
-                        </div>
+            <!-- Contact Info -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4 text-white">Contact Us</h3>
+                <ul class="space-y-3 text-sm text-gray-400">
+                    <li><i class="fas fa-map-marker-alt mr-2 text-blue-400"></i>CMC Tower, Hanoi, Vietnam</li>
+                    <li><i class="fas fa-phone-alt mr-2 text-green-400"></i>+84 123 456 789</li>
+                    <li><i class="fas fa-envelope mr-2 text-yellow-400"></i>info@cmcglobal.com</li>
+                </ul>
+            </div>
 
-                        <!-- Social Media -->
-                        <div>
-                            <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
-                            <div class="flex space-x-4">
-                                <a href="#" class="text-gray-400 hover:text-white transition">
-                                    <i class="fab fa-facebook-f text-xl"></i>
-                                </a>
-                                <a href="#" class="text-gray-400 hover:text-white transition">
-                                    <i class="fab fa-twitter text-xl"></i>
-                                </a>
-                                <a href="#" class="text-gray-400 hover:text-white transition">
-                                    <i class="fab fa-linkedin-in text-xl"></i>
-                                </a>
-                                <a href="#" class="text-gray-400 hover:text-white transition">
-                                    <i class="fab fa-youtube text-xl"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Bar -->
-                    <div class="mt-8 pt-8 border-t border-gray-700 text-center">
-                        <p class="text-gray-400 text-sm">
-                            &copy; {{ date('Y') }} CMC Technology Corporation. All rights reserved.
-                        </p>
-                    </div>
+            <!-- Social Media -->
+            <div>
+                <h3 class="text-xl font-semibold mb-4 text-white">Follow Us</h3>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-blue-500 transform hover:scale-125 transition duration-300">
+                        <i class="fab fa-facebook-f text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-sky-400 transform hover:scale-125 transition duration-300">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-blue-600 transform hover:scale-125 transition duration-300">
+                        <i class="fab fa-linkedin-in text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-red-500 transform hover:scale-125 transition duration-300">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
                 </div>
-            </footer>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="mt-16 pt-8 border-t border-gray-700 text-center">
+            <p class="text-sm text-gray-500 tracking-wide">
+                &copy; {{ date('Y') }} <span class="font-semibold text-white">CMC Technology Corporation</span>. All rights reserved.
+            </p>
+        </div>
+    </div>
+</footer>
+
         </div>
         @stack('scripts')
 

@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <h1 class="text-center mb-4">Danh sách CV ứng tuyển cho công việc</h1>
-
+            
             @if($cvs->isEmpty())
                 <div class="alert alert-info text-center">
                     Chưa có CV nào cho công việc này.

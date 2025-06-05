@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FunctionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
@@ -100,7 +101,7 @@ Route::get('/pool', [\App\Http\Controllers\PoolController::class, 'index']);
 
 use App\Http\Controllers\PoolController;
 
-Route::get('/pool/cxo/{id}', [PoolController::class, 'showCxo'])->name('pool.cxo.show');
+// Route::get('/pool/cxo/{id}', [PoolController::class, 'showCxo'])->name('pool.cxo.show');
 
 
 Route::get('/pool/function', [PoolController::class, 'functionList'])->name('pool.function');
@@ -128,3 +129,41 @@ use App\Http\Controllers\CandidateController;
 
 Route::get('/candidates', [CandidateController::class, 'index'])->name('candidates.index');
 Route::get('/candidates/print', [CandidateController::class, 'exportPdf'])->name('candidates.pdf');
+// Route::get('/jobs', [JobController::class, 'index'])->name('jobs.index');
+// routes/web.php
+
+// Route::get('/jobs/{id}', [JobController::class, 'detail'])->name('jobs.detail');
+Route::get('/jobs/{job}/edit', [JobController::class, 'edit'])->name('jobs.edit');
+Route::put('/jobs/{job}', [JobController::class, 'update'])->name('jobs.update');
+Route::get('/pool/cxo/{cxo}', [PoolController::class, 'showCxo'])->name('pool.show');
+
+
+
+Route::prefix('pool')->group(function () {
+    Route::get('/', [PoolController::class, 'index'])->name('pool.index');
+
+    Route::get('/create', [PoolController::class, 'createCxo'])->name('pool.create');
+    Route::post('/store', [PoolController::class, 'storeCxo'])->name('pool.store');
+    Route::get('/{id}', [PoolController::class, 'showCxo'])->name('pool.show');
+
+    Route::get('/function', [PoolController::class, 'functionList'])->name('pool.function');
+});
+//     Route::prefix('pool/function')->name('pool.function.')->group(function () {
+//     Route::get('/', [FunctionController::class, 'index'])->name('index');
+//     Route::get('/create', [FunctionController::class, 'create'])->name('create');
+//     Route::post('/store', [FunctionController::class, 'store'])->name('store');
+//     Route::get('/{id}', [FunctionController::class, 'show'])->name('show');
+// });
+
+    Route::prefix('function')->group(function () {
+        Route::get('/create', [FunctionController::class, 'create'])->name('pool.function.create');
+        Route::post('/', [FunctionController::class, 'store'])->name('pool.function.store');
+        Route::get('/{id}', [FunctionController::class, 'show'])->name('pool.function.show');
+
+    });
+Route::get('/pool/function/{id}', [FunctionController::class, 'show'])->name('pool.function.show');
+
+
+use App\Http\Controllers\JobStatisticController;
+
+Route::get('/statistics', [JobStatisticController::class, 'index'])->name('jobs.statistics');

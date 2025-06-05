@@ -16,13 +16,15 @@ class Job extends Model
     'company_id',
     'status',
     'type',
+    'vacancy', // thêm trường vacancy
+
         // thêm nếu bạn có các trường khác
     ];
 
     // Thêm cast để Laravel tự động chuyển string thành Carbon
     protected $casts = [
         'start_date' => 'date',
-   
+
     ];
 
     // Quan hệ với công ty

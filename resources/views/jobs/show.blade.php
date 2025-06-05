@@ -24,7 +24,22 @@
                 {{-- Nếu có ngày thì hiển thị, không thì báo "Chưa cập nhật" --}}
                 {{ $job->start_date ? $job->start_date->format('d/m/Y') : 'Chưa cập nhật' }}
             </p>
+            {{-- Số lượng cần tuyển --}}
+<div class="d-flex align-items-center gap-2">
+    <span class="fw-semibold text-secondary">Headcounts: </span>
+    <span class="badge bg-info text-dark px-3 py-2 rounded-pill">
+        {{ $job->vacancy }}
+    </span>
+</div>
 
+{{-- Trạng thái công việc --}}
+<div class="d-flex align-items-center gap-2 mt-2">
+    <span class="fw-semibold text-secondary">Status: </span>
+    <span class="badge {{ $job->status === 'open' ? 'bg-success' : 'bg-danger' }} px-3 py-2 rounded-pill">
+        {{ $job->status === 'open' ? 'Open' : 'Closed' }}
+    </span>
+</div>
+    <br>
             {{-- 📊 Các nút trạng thái ứng viên cùng số lượng --}}
             <div class="d-flex flex-wrap gap-3">
                 {{-- Số lượng CV đã nộp --}}
@@ -77,7 +92,7 @@
                 {{-- Số lượng đã nhận việc (hand) --}}
                 <button type="button" class="btn btn-outline-dark btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
                     style="min-width: 110px;">
-                    Hand
+                    Onboard
                     <span class="badge bg-dark px-3 py-2 rounded-pill">
                         {{ $job->hand_count ?? 0 }}
                     </span>
@@ -126,17 +141,20 @@
         {{-- 🎯 Nút hành động --}}
         <div class="d-flex justify-content-start gap-3 flex-wrap align-items-center">
             {{-- Nút ứng tuyển --}}
-            <a href="{{ route('jobs.apply', $job->id) }}"
-                class="btn btn-success btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-                style="font-size: 0.95rem; transition: background-color 0.3s ease;">
-                <i class="bi bi-pencil-square me-2"></i> Ứng tuyển
-            </a>
+           @if ($job->status === 'open')
+    <a href="{{ route('jobs.apply', $job->id) }}"
+        class="btn btn-success btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
+        style="font-size: 0.95rem;">
+        <i class="bi bi-pencil-square me-2"></i> Add Job
+    </a>
+@endif
+
 
             {{-- Nút xem danh sách CV --}}
            <a href="{{ route('cv.index.job', $job->id) }}"
    class="btn btn-outline-primary btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
    style="font-size: 0.95rem; transition: color 0.3s ease, border-color 0.3s ease;">
-   <i class="bi bi-card-list me-2"></i> Danh sách CV
+   <i class="bi bi-card-list me-2"></i> List CV
 </a>
 
         </div>

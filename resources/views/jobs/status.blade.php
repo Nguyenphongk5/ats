@@ -22,15 +22,23 @@
             </button>
 
             <div id="managerJobs" style="display: none;">
-                @forelse ($managerJobs as $job)
-                <a href="{{ route('jobs.show', $job->id) }}"
-                    class="block p-4 border rounded mb-3 bg-white hover:bg-blue-50 transition">
-                     <h4 class="text-lg font-medium">{{ $job->title }}</h4>
-                     <p class="text-sm text-gray-600">{{ Str::limit($job->description, 100) }}</p>
-                 </a>
-                @empty
-                    <p class="text-gray-500">Không có công việc quản lý nào.</p>
-                @endforelse
+               @forelse ($managerJobs as $job)
+<div class="flex items-center justify-between p-4 border rounded mb-3 bg-white hover:bg-blue-50 transition">
+    <div class="flex-1">
+        <a href="{{ route('jobs.show', $job->id) }}" class="block">
+            <h4 class="text-lg font-medium">{{ $job->title }}</h4>
+            <p class="text-sm text-gray-600">{{ Str::limit($job->description, 100) }}</p>
+        </a>
+    </div>
+    <a href="{{ route('jobs.edit', $job->id) }}"
+       class="ml-4 text-sm text-blue-600 hover:underline font-semibold whitespace-nowrap">
+       Edit
+    </a>
+</div>
+@empty
+    <p class="text-gray-500">Không có công việc quản lý nào.</p>
+@endforelse
+
             </div>
         </div>
 
@@ -42,15 +50,23 @@
             </button>
 
             <div id="specialistJobs" style="display: none;">
-                @forelse ($specialistJobs as $job)
-                <a href="{{ route('jobs.show', $job->id) }}"
-                    class="block p-4 border rounded mb-3 bg-white hover:bg-blue-50 transition">
-                     <h4 class="text-lg font-medium">{{ $job->title }}</h4>
-                     <p class="text-sm text-gray-600">{{ Str::limit($job->description, 100) }}</p>
-                 </a>
-                @empty
-                    <p class="text-gray-500">Không có công việc chuyên viên nào.</p>
-                @endforelse
+            @forelse ($specialistJobs as $job)
+<div class="flex items-center justify-between p-4 border rounded mb-3 bg-white hover:bg-blue-50 transition">
+    <div class="flex-1">
+        <a href="{{ route('jobs.show', $job->id) }}" class="block">
+            <h4 class="text-lg font-medium">{{ $job->title }}</h4>
+            <p class="text-sm text-gray-600">{{ Str::limit($job->description, 100) }}</p>
+        </a>
+    </div>
+    <a href="{{ route('jobs.edit', $job->id) }}"
+       class="ml-4 text-sm text-green-600 hover:underline font-semibold whitespace-nowrap">
+       Edit
+    </a>
+</div>
+@empty
+    <p class="text-gray-500">Không có công việc chuyên viên nào.</p>
+@endforelse
+
             </div>
         </div>
     </div>

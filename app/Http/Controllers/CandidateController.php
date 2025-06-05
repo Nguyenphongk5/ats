@@ -17,7 +17,7 @@ class CandidateController extends Controller
 
         if ($filterMonth) {
             $query->whereYear('created_at', substr($filterMonth, 0, 4))
-                  ->whereMonth('created_at', substr($filterMonth, 5, 2));
+                ->whereMonth('created_at', substr($filterMonth, 5, 2));
         }
 
         $candidates = $query->orderBy('created_at', 'desc')->get();
@@ -33,34 +33,34 @@ class CandidateController extends Controller
         $offer = [];
         $hand = [];
 
-        for ($i = 0; $i < 16; $i++) {
+        for ($i = 0; $i < 19; $i++) {
             $month = $startDate->copy()->addMonths($i)->format('Y-m');
 
             $labels[] = $month;
 
             $apply[] = Cv::whereYear('created_at', substr($month, 0, 4))
-                         ->whereMonth('created_at', substr($month, 5, 2))
-                         ->count();
+                ->whereMonth('created_at', substr($month, 5, 2))
+                ->count();
 
             $qualify[] = Cv::whereYear('qualify_date', substr($month, 0, 4))
-                           ->whereMonth('qualify_date', substr($month, 5, 2))
-                           ->count();
+                ->whereMonth('qualify_date', substr($month, 5, 2))
+                ->count();
 
             $interview1[] = Cv::whereYear('interview1_date', substr($month, 0, 4))
-                              ->whereMonth('interview1_date', substr($month, 5, 2))
-                              ->count();
+                ->whereMonth('interview1_date', substr($month, 5, 2))
+                ->count();
 
             $interview2[] = Cv::whereYear('interview2_date', substr($month, 0, 4))
-                              ->whereMonth('interview2_date', substr($month, 5, 2))
-                              ->count();
+                ->whereMonth('interview2_date', substr($month, 5, 2))
+                ->count();
 
             $offer[] = Cv::whereYear('offer_date', substr($month, 0, 4))
-                         ->whereMonth('offer_date', substr($month, 5, 2))
-                         ->count();
+                ->whereMonth('offer_date', substr($month, 5, 2))
+                ->count();
 
             $hand[] = Cv::whereYear('hand_date', substr($month, 0, 4))
-                        ->whereMonth('hand_date', substr($month, 5, 2))
-                        ->count();
+                ->whereMonth('hand_date', substr($month, 5, 2))
+                ->count();
         }
 
         $chartData = [

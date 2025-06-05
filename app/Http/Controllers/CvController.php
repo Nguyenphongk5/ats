@@ -10,13 +10,25 @@ use Illuminate\Support\Facades\Auth;
 
 class CvController extends Controller
 {
-    public function index()
-    {
-        $cvs = Cv::with('job')->orderBy('created_at', 'desc')->get();
-        $cvsGrouped = $cvs->groupBy('job_id');
+public function index(Request $request)
+{
+    $jobId = $request->input('job_id');
 
-        return view('cv.index', compact('cvsGrouped'));
+    $cvsQuery = Cv::with('job')->orderBy('created_at', 'desc');
+
+    if (!empty($jobId)) {
+        $cvsQuery->where('job_id', $jobId);
     }
+
+    $cvs = $cvsQuery->get();
+    $cvsGrouped = $cvs->groupBy('job_id');
+
+    // Lấy danh sách công việc để dùng trong dropdown lọc
+    $jobs = Job::orderBy('title')->get();
+
+    return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
+}
+
     public function listByJob($jobId)
 {
     $cvs = Cv::with('job')
@@ -30,9 +42,11 @@ class CvController extends Controller
 {
     // Lấy danh sách CV theo công việc đó
     $cvsGrouped = collect([$job->id => $job->cvs]);
+$jobs = Job::orderBy('title')->get();
+$jobId = $job->id;
 
-    // Trả về view như trang hiển thị tất cả, dùng lại được luôn
-    return view('cv.index', compact('cvsGrouped'));
+return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
+
 }
    public function show($id)
 {

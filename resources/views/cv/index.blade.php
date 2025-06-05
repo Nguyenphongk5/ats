@@ -1,109 +1,85 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container py-5">
-
-        <h1 class="text-center mb-5 fw-bold text-primary" style="font-size: 2.5rem; letter-spacing: 0.03em;">
-            Danh sách CV
-        </h1>
-
-        <div class="row gy-5">
-            @forelse($cvsGrouped as $jobId => $groupedCvs)
-                {{-- Tiêu đề nhóm công việc --}}
-                <div class="col-12 mb-3">
-                    <h4 class="fw-semibold text-primary d-flex align-items-center gap-2" style="font-size: 1.4rem;">
-                        <i class="bi bi-briefcase-fill"></i> Công việc:
-                        <span>{{ $groupedCvs->first()->job?->title ?? 'Không xác định' }}</span>
-                        <span class="badge bg-secondary">{{ count($groupedCvs) }} CV</span>
-                    </h4>
-                </div>
-
-                @foreach ($groupedCvs as $cv)
-                    <div class="col-md-4">
-                        <div class="card h-100 shadow-sm border-0 rounded-4 d-flex flex-column justify-content-between"
-                            style="transition: 0.3s;">
-
-                            <div class="card-body d-flex flex-column">
-
-                                <ul class="list-unstyled mb-3 small text-secondary">
-                                    <li class="mb-1"><strong>Họ tên:</strong> {{ $cv->full_name ?? 'Không có' }}</li>
-                                    <li class="mb-1"><strong>Năm sinh:</strong> {{ $cv->birth_year ?? 'Không có' }}</li>
-                                    <li class="mb-1"><strong>Công ty gần nhất:</strong>
-                                        {{ $cv->last_company ?? 'Không có' }}</li>
-                                    <li class="mb-1"><strong>Chức danh:</strong> {{ $cv->last_position ?? 'Không có' }}
-                                    </li>
-                                </ul>
+<div class="container px-4 px-md-5 py-5" style="max-width: 1140px;">
+    <h1 class="text-center mb-5 fw-bold text-primary" style="font-size: 2.5rem;">
+        Danh sách CV
+    </h1>
+  @if (!isset($jobId))
+    <div class="mb-6">
+        <form method="GET" action="{{ route('cv.index') }}" class="flex flex-col md:flex-row md:items-center gap-3">
+            <label for="job_id" class="font-semibold text-gray-700">Lọc theo Jobs:</label>
+            <select name="job_id" id="job_id" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                @foreach($jobs as $job)
+                    <option value="{{ $job->id }}" {{ request('job_id') == $job->id ? 'selected' : '' }}>
+                        {{ $job->title }}
+                    </option>
+                @endforeach
+            </select>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                Lọc
+            </button>
+        </form>
+    </div>
+@endif
 
 
 
-                                <p class="text-muted small fst-italic mb-4">
-                                    <i class="bi bi-clock-history"></i> Ngày nộp: {{ $cv->created_at->format('d/m/Y H:i') }}
-                                </p>
 
-                                <div class="mt-auto">
+    @forelse($cvsGrouped as $jobId => $groupedCvs)
+        <div class="card mb-5 border-0 shadow-sm rounded-4">
+            <div class="card-header bg-light rounded-top-4 py-3 px-4">
+                <h4 class="fw-semibold text-primary mb-0 d-flex align-items-center gap-2">
+                    <i class="bi bi-briefcase-fill"></i> Job:
+                    <span>{{ $groupedCvs->first()->job?->title ?? 'Không xác định' }}</span>
+                    <span class="badge bg-secondary">{{ count($groupedCvs) }} CV</span>
+                </h4>
+            </div>
+
+            <div class="card-body px-4 pb-4">
+                <div class="row gy-4">
+                    @foreach ($groupedCvs as $cv)
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm rounded-3 hover-lift d-flex flex-column justify-content-between">
+                                <div class="card-body d-flex flex-column">
+
+                                    <ul class="list-unstyled mb-3 small text-secondary">
+                                        <li><strong>Họ tên:</strong> {{ $cv->full_name ?? 'Không có' }}</li>
+                                        <li><strong>Năm sinh:</strong> {{ $cv->birth_year ?? 'Không có' }}</li>
+                                        <li><strong>Công ty gần nhất:</strong> {{ $cv->last_company ?? 'Không có' }}</li>
+                                        <li><strong>Chức danh:</strong> {{ $cv->last_position ?? 'Không có' }}</li>
+                                    </ul>
+
+                                    <p class="text-muted small fst-italic mt-auto">
+                                        <i class="bi bi-clock-history"></i> Nộp: {{ $cv->created_at->format('d/m/Y H:i') }}
+                                    </p>
+
                                     <a href="{{ route('cv.view', $cv->id) }}" target="_blank"
-                                        class="btn btn-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-2 rounded-pill shadow-sm"
-                                        style="font-weight: 600; font-size: 0.95rem;">
-                                        <i class="bi bi-file-earmark-text fs-5"></i> Xem CV
+                                       class="btn btn-sm btn-outline-primary w-100 mt-2 rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2">
+                                        <i class="bi bi-file-earmark-text"></i> View
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            @empty
-                <div class="col-12">
-                    <div class="alert alert-warning text-center fs-5 rounded shadow-sm">
-                        Không có CV nào được nộp.
-                    </div>
+                    @endforeach
                 </div>
-            @endforelse
+            </div>
         </div>
-    </div>
+    @empty
+        <div class="alert alert-warning text-center fs-5 rounded shadow-sm">
+            Không có CV nào được nộp.
+        </div>
+    @endforelse
+</div>
 
-    {{-- Hiệu ứng hover --}}
-    <style>
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+<style>
+    .hover-lift {
+        transition: 0.3s;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+    }
+</style>
 @endsection
-
-@push('scripts')
-    <script>
-        // Code JS của bạn ở đây
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.qualify-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const cvId = this.dataset.cvId;
-                    const token = document.querySelector('meta[name="csrf-token"]').getAttribute(
-                        'content');
-
-                    fetch(`/cvs/${cvId}/qualify`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token,
-                        },
-                        body: JSON.stringify({})
-                    })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                this.disabled = true;
-                                alert('Đã đánh dấu !');
-
-                                // Nếu muốn update số lượng qualified trên trang job:
-                                // Ví dụ bạn có 1 span hiển thị số lượng, thì update nó ở đây
-                                // document.querySelector('#qualifiedCountSpan').textContent = data.qualifiedCount;
-                            } else {
-                                alert('Có lỗi xảy ra, thử lại!');
-                            }
-                        })
-                        .catch(() => alert('Lỗi kết nối!'));
-                });
-            });
-        });
-    </script>
-@endpush
