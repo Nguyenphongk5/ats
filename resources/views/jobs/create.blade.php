@@ -91,7 +91,7 @@
                 </div>
 
                 {{-- Trạng thái --}}
-                <div class="mb-3">
+                {{-- <div class="mb-3">
                     <label for="status" class="form-label fw-semibold">🔒 Trạng thái <span class="text-danger">*</span></label>
                     <select
                         id="status"
@@ -105,7 +105,7 @@
                     @error('status')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
+                </div> --}}
 
                 {{-- Loại công việc --}}
                 <div class="mb-3">

@@ -7,39 +7,61 @@
         </h2>
     </x-slot>
 
-    <div class="container py-4">
-        <div class="card shadow-sm border-0">
-            <div class="card-body">
-                <h2 class="text-center mb-4 text-primary fw-bold">📊 Thống kê ứng viên theo giai đoạn</h2>
+  <div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h2 class="text-center mb-4 text-primary fw-bold">📊 Thống kê ứng viên theo giai đoạn</h2>
 
-                {{-- <form method="GET" action="{{ route('candidates.index') }}" class="row g-3 justify-content-center mb-4">
-                <div class="col-md-4">
-                    <label for="month" class="form-label">📅 Chọn tháng</label>
-                    <input type="month" id="month" name="month" class="form-control" value="{{ request('month') }}">
-                </div>
-                <div class="col-md-4">
-                    <label for="filter_field" class="form-label">🔍 Lọc theo giai đoạn</label>
-                    <select name="filter_field" id="filter_field" class="form-select">
-                        <option value="created_at" {{ request('filter_field') == 'created_at' ? 'selected' : '' }}>Ứng tuyển (Apply)</option>
-                        <option value="qualify_date" {{ request('filter_field') == 'qualify_date' ? 'selected' : '' }}>Đạt yêu cầu</option>
-                        <option value="interview1_date" {{ request('filter_field') == 'interview1_date' ? 'selected' : '' }}>Phỏng vấn 1</option>
-                        <option value="interview2_date" {{ request('filter_field') == 'interview2_date' ? 'selected' : '' }}>Phỏng vấn 2</option>
-                        <option value="offer_date" {{ request('filter_field') == 'offer_date' ? 'selected' : '' }}>Offer</option>
-                        <option value="hand_date" {{ request('filter_field') == 'hand_date' ? 'selected' : '' }}>Nhận việc</option>
-                    </select>
-                </div>
-                <div class="col-md-2 align-self-end">
-                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel-fill me-1"></i> Lọc</button>
-                </div>
-            </form> --}}
+            <div class="mt-4">
+                {{-- <h5 class="text-center text-secondary mb-3">📈 Biểu đồ ứng viên </h5> --}}
 
-                <div class="mt-4">
-                    <h5 class="text-center text-secondary mb-3">📈 Biểu đồ ứng viên theo tháng</h5>
-                    <canvas id="candidateChart" height="120"></canvas>
+                <!-- Nút in biểu đồ -->
+                <div class="text-right mb-3">
+                    <button onclick="printChart()" class="btn btn-primary">🖨️ In biểu đồ</button>
                 </div>
+
+                <canvas id="candidateChart" height="120"></canvas>
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    function printChart() {
+        const canvas = document.getElementById('candidateChart');
+        const dataUrl = canvas.toDataURL(); // Lấy ảnh từ canvas
+
+        // Mở cửa sổ mới chứa ảnh biểu đồ
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>In biểu đồ</title>
+                <style>
+                    body { text-align: center; margin: 0; padding: 0; }
+                    img { max-width: 100%; height: auto; }
+                    @media print {
+                        body, html { margin: 0; padding: 0; }
+                    }
+                </style>
+            </head>
+            <body>
+                <h2>📈 Biểu đồ ứng viên theo tháng</h2>
+                <img src="${dataUrl}" alt="Biểu đồ ứng viên" />
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        window.onafterprint = function() { window.close(); }
+                    };
+                <\/script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+    }
+</script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -52,53 +74,53 @@
             data: {
                 labels: chartData.labels,
                 datasets: [{
-                        label: 'Apply',
-                        data: chartData.apply,
-                        borderColor: '#0d6efd',
-                        backgroundColor: '#0d6efd33',
-                        tension: 0.4,
-                        fill: false
-                    },
-                    {
-                        label: 'Qualify',
-                        data: chartData.qualify,
-                        borderColor: '#198754',
-                        backgroundColor: '#19875433',
-                        tension: 0.4,
-                        fill: false
-                    },
-                    {
-                        label: 'Phỏng Vấn 1',
-                        data: chartData.interview1,
-                        borderColor: '#e83e8c',
-                        backgroundColor: '#ffc10733',
-                        tension: 0.4,
-                        fill: false
-                    },
-                    {
-                        label: 'Phỏng Vấn 2',
-                        data: chartData.interview2,
-                        borderColor: '#fd7e14',
-                        backgroundColor: '#fd7e1433',
-                        tension: 0.4,
-                        fill: false
-                    },
-                    {
-                        label: 'Offer',
-                        data: chartData.offer,
-                        borderColor: '#20c997',
-                        backgroundColor: '#20c99733',
-                        tension: 0.4,
-                        fill: false
-                    },
-                    {
-                        label: 'Onboard',
-                        data: chartData.hand,
-                        borderColor: '#dc3545',
-                        backgroundColor: '#dc354533',
-                        tension: 0.4,
-                        fill: false
-                    }
+                    label: 'Apply',
+                    data: chartData.apply,
+                    borderColor: '#0d6efd',
+                    backgroundColor: '#0d6efd33',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Qualify',
+                    data: chartData.qualify,
+                    borderColor: '#198754',
+                    backgroundColor: '#19875433',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Phỏng Vấn 1',
+                    data: chartData.interview1,
+                    borderColor: '#e83e8c',
+                    backgroundColor: '#ffc10733',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Phỏng Vấn 2',
+                    data: chartData.interview2,
+                    borderColor: '#fd7e14',
+                    backgroundColor: '#fd7e1433',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Offer',
+                    data: chartData.offer,
+                    borderColor: '#20c997',
+                    backgroundColor: '#20c99733',
+                    tension: 0.4,
+                    fill: false
+                },
+                {
+                    label: 'Onboard',
+                    data: chartData.hand,
+                    borderColor: '#dc3545',
+                    backgroundColor: '#dc354533',
+                    tension: 0.4,
+                    fill: false
+                }
                 ]
             },
             options: {
@@ -178,7 +200,8 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-extrabold text-indigo-700 group-hover:text-indigo-900">
-                            {{ $stats['total_cvs'] ?? 0 }}</p>
+                            {{ $stats['total_cvs'] ?? 0 }}
+                        </p>
                         <p
                             class="mt-2 text-sm font-semibold text-indigo-600 group-hover:text-indigo-800 uppercase tracking-wider">
                             Tổng số CV</p>
@@ -197,7 +220,8 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-extrabold text-blue-700 group-hover:text-blue-900">
-                            {{ $stats['total_jobs'] ?? 0 }}</p>
+                            {{ $stats['total_jobs'] ?? 0 }}
+                        </p>
                         <p
                             class="mt-2 text-sm font-semibold text-blue-600 group-hover:text-blue-800 uppercase tracking-wider">
                             Tổng số công việc</p>
@@ -216,7 +240,9 @@
                             </svg>
                         </div>
                         <p class="text-3xl font-extrabold text-green-700 group-hover:text-green-900">
-                            {{ number_format($percentClosed, 2) }}%</p>
+                            {{ intval($percentClosed) }}%
+                        </p>
+
                         <p
                             class="mt-2 text-sm font-semibold text-green-600 group-hover:text-green-800 uppercase tracking-wider">
                             Tỷ lệ công việc đã đóng </p>

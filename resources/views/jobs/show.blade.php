@@ -145,7 +145,7 @@
     <a href="{{ route('jobs.apply', $job->id) }}"
         class="btn btn-success btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
         style="font-size: 0.95rem;">
-        <i class="bi bi-pencil-square me-2"></i> Add Job
+        <i class="bi bi-pencil-square me-2"></i> Add CV  
     </a>
 @endif
 

@@ -8,6 +8,7 @@ use App\Models\Cv;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class JobController extends Controller
 {
     public function index(Request $request)
@@ -106,7 +107,8 @@ class JobController extends Controller
     $job = Job::with([
         'cvs' => function ($query) {
             // Chỉ lấy các CV do người dùng hiện tại (đã đăng nhập) nộp cho công việc này
-            $query->where('user_id', auth()->id());
+            // $query->where('user_id', auth()->id());
+            $query->where('user_id', Auth::id());
         }
     ])->findOrFail($id); // Nếu không tìm thấy job => trả về lỗi 404
          if ($job->hand_count >= $job->vacancy && $job->status !== 'closed') {
@@ -164,7 +166,7 @@ public function update(Request $request, Job $job)
         'description' => 'nullable|string',             // Mô tả có thể để trống
         'start_date' => 'required|date',                // Ngày bắt đầu
         'company_id' => 'required|exists:companies,id', // Công ty phải tồn tại
-        'status' => 'required|in:open,closed',          // Trạng thái: đang mở / đã đóng
+        // 'status' => 'required|in:open,closed',          // Trạng thái: đang mở / đã đóng
         'type' => 'required|in:manager,specialist',     // Loại job: quản lý / chuyên viên
     ]);
 
@@ -174,7 +176,7 @@ public function update(Request $request, Job $job)
         'description' => $validated['description'] ?? null,
         'start_date' => $validated['start_date'],
         'company_id' => $validated['company_id'],
-        'status' => $validated['status'],
+        // 'status' => $validated['status'],
         'type' => $validated['type'],
     ]);
 

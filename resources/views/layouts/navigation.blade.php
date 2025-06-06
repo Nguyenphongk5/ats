@@ -11,66 +11,48 @@
                 </div>
 
                 <!-- Navigation Links -->
-               <div class="hidden sm:flex sm:space-x-6 sm:ml-12">
-    <x-nav-link
-        :href="route('dashboard')"
-        :active="request()->routeIs('dashboard')"
-        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
+                <div class="hidden sm:flex sm:space-x-6 sm:ml-12">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')"
+                        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
                hover:bg-indigo-100 hover:text-indigo-700
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-    >
-        {{ __('Trang chủ') }}
-    </x-nav-link>
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('Trang chủ') }}
+                    </x-nav-link>
 
-      <x-nav-link
-        :href="route('about')"
-        :active="request()->routeIs('about')"
-        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
+                    <x-nav-link :href="route('about')" :active="request()->routeIs('about')"
+                        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
                hover:bg-indigo-100 hover:text-indigo-700
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-    >
-        {{ __('Giới thiệu') }}
-    </x-nav-link>
-    <x-nav-link
-        :href="route('jobs.index')"
-        :active="request()->routeIs('jobs.index')"
-        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('Giới thiệu') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('jobs.index')" :active="request()->routeIs('jobs.index')"
+                        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
                hover:bg-indigo-100 hover:text-indigo-700
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-    >
-        {{ __('Jobs') }}
-    </x-nav-link>
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('Jobs') }}
+                    </x-nav-link>
 
-    <x-nav-link
-        :href="route('cv.index')"
-        :active="request()->routeIs('cv.index')"
-        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
+                    <x-nav-link :href="route('cv.index')" :active="request()->routeIs('cv.index')"
+                        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
                hover:bg-indigo-100 hover:text-indigo-700
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-    >
-        {{ __('CV') }}
-    </x-nav-link>
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('CV') }}
+                    </x-nav-link>
 
-    <x-nav-link
-        :href="route('apply.index')"
-        :active="request()->routeIs('apply.index')"
-        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
+                    <x-nav-link :href="route('apply.index')" :active="request()->routeIs('apply.index')"
+                        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
                hover:bg-indigo-100 hover:text-indigo-700
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-    >
-        {{ __('Apply') }}
-    </x-nav-link>
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('Apply') }}
+                    </x-nav-link>
 
-    <x-nav-link
-        :href="route('contact')"
-        :active="request()->routeIs('contact')"
-        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
+                    <x-nav-link :href="route('contact')" :active="request()->routeIs('contact')"
+                        class="px-4 py-2 rounded-md text-base font-semibold transition-colors duration-200
                hover:bg-indigo-100 hover:text-indigo-700
-               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-    >
-        {{ __('Liên hệ') }}
-    </x-nav-link>
-</div>
+               focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        {{ __('Liên hệ') }}
+                    </x-nav-link>
+                </div>
 
             </div>
 
@@ -80,7 +62,10 @@
                     <x-slot name="trigger">
                         <button
                             class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+                            @if (Auth::check())
+                                <div>{{ Auth::user()->name }}</div>
+                            @endif
+
 
 
                             <div class="ms-1">
