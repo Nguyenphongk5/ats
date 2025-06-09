@@ -15,51 +15,68 @@
                 📥 Xuất Excel
             </button>
         </div>
+
         <form method="GET" action="{{ route('jobs.statistics') }}" class="mb-6 flex items-center gap-4">
-    <label for="month" class="font-semibold text-gray-700">Chọn tháng:</label>
-    <input
-        type="month"
-        id="month"
-        name="month"
-        value="{{ request('month') }}"
-        class="border rounded px-3 py-1"
-    />
-    <button
-        type="submit"
-        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded"
-    >
-        Lọc
-    </button>
+            <label for="month" class="font-semibold text-gray-700">Chọn tháng:</label>
+            <input
+                type="month"
+                id="month"
+                name="month"
+                value="{{ request('month') }}"
+                class="border rounded px-3 py-1"
+            />
+            <button
+                type="submit"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded"
+            >
+                Lọc
+            </button>
 
-    @if(request('month'))
-        <a href="{{ route('jobs.statistics') }}"
-           class="ml-4 text-red-600 hover:underline font-semibold">
-           Bỏ lọc
-        </a>
-    @endif
-</form>
+            @if(request('month'))
+                <a href="{{ route('jobs.statistics') }}"
+                   class="ml-4 text-red-600 hover:underline font-semibold">
+                   Bỏ lọc
+                </a>
+            @endif
+        </form>
 
-<form method="GET" action="{{ route('jobs.statistics') }}" class="mb-6 flex items-center gap-4">
+        <form method="GET" action="{{ route('jobs.statistics') }}" class="mb-6 flex items-center gap-4">
+            <label for="type" class="font-semibold text-gray-700">Loại công việc:</label>
+            <select name="type" id="type" class="border rounded px-3 py-1">
+                <option value="">Tất cả</option>
+                <option value="manager" {{ request('type') == 'manager' ? 'selected' : '' }}>Quản lý</option>
+                <option value="specialist" {{ request('type') == 'specialist' ? 'selected' : '' }}>Chuyên viên</option>
+            </select>
 
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded">
+                Lọc
+            </button>
 
-    <label for="type" class="font-semibold text-gray-700">Loại công việc:</label>
-    <select name="type" id="type" class="border rounded px-3 py-1">
-        <option value="">Tất cả</option>
-        <option value="manager" {{ request('type') == 'manager' ? 'selected' : '' }}>Quản lý</option>
-        <option value="specialist" {{ request('type') == 'specialist' ? 'selected' : '' }}>Chuyên viên</option>
-    </select>
-
-    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded">
-        Lọc
-    </button>
-
-    @if(request('month') || request('type'))
-        <a href="{{ route('jobs.statistics') }}"
-           class="ml-4 text-red-600 hover:underline font-semibold">
-           Bỏ lọc
-        </a>
-    @endif
-</form>
+            @if(request('month') || request('type'))
+                <a href="{{ route('jobs.statistics') }}"
+                   class="ml-4 text-red-600 hover:underline font-semibold">
+                   Bỏ lọc
+                </a>
+            @endif
+        </form>
+        <div class="mb-6 flex space-x-4 justify-center">
+    <a href="{{ route('jobs.statistics', request()->except('status')) }}"
+       class="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100 font-semibold">
+       Tất cả ({{ $jobs->count() }})
+    </a>
+    <a href="{{ route('jobs.statistics', array_merge(request()->except('status'), ['status' => 'on_time'])) }}"
+       class="px-4 py-2 rounded {{ request('status') === 'on_time' ? 'bg-green-600 text-white' : 'border border-green-600 text-green-600 hover:bg-green-100' }} font-semibold">
+       ✅ Đúng hạn ({{ $countOnTime }})
+    </a>
+    <a href="{{ route('jobs.statistics', array_merge(request()->except('status'), ['status' => 'late'])) }}"
+       class="px-4 py-2 rounded {{ request('status') === 'late' ? 'bg-red-600 text-white' : 'border border-red-600 text-red-600 hover:bg-red-100' }} font-semibold">
+       ⏱️ Chậm ({{ $countLate }})
+    </a>
+    <a href="{{ route('jobs.statistics', array_merge(request()->except('status'), ['status' => 'processing'])) }}"
+       class="px-4 py-2 rounded {{ request('status') === 'processing' ? 'bg-yellow-500 text-white' : 'border border-yellow-500 text-yellow-500 hover:bg-yellow-100' }} font-semibold">
+       🔄 Đang tiến hành ({{ $countProcessing }})
+    </a>
+</div>
 
         <div class="overflow-x-auto bg-white rounded-xl shadow-lg border border-gray-200">
             <table id="jobOfferTable" class="min-w-full text-left border-collapse">
@@ -70,7 +87,8 @@
                         <th class="border-b border-indigo-300 px-5 py-3">Loại</th>
                         <th class="border-b border-indigo-300 px-5 py-3">Ngày mở Job</th>
                         <th class="border-b border-indigo-300 px-5 py-3">Ngày Offer</th>
-                        <th class="border-b border-indigo-300 px-5 py-3">Số ngày chờ</th>
+                        <th class="border-b border-indigo-300 px-5 py-3">Thời gian</th>
+                        <th class="border-b border-indigo-300 px-5 py-3">Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-700">
@@ -79,8 +97,7 @@
                             @foreach ($job->cvs->whereNotNull('offer_date') as $cvIndex => $cv)
                                 @php
                                     $offerDate = $cv->offer_date;
-                               $days = (int) $job->created_at->diffInDays($offerDate);
-
+                                    $days = (int) $job->created_at->diffInDays($offerDate);
 
                                     $isManager = $job->type === 'manager';
                                     $threshold = $isManager ? 60 : 45;
@@ -99,7 +116,6 @@
                                             {!! $isManager ? 'Quản lý' : 'Chuyên&nbsp;viên' !!}
                                         </span>
                                     </td>
-
                                     <td class="border-b border-indigo-200 px-5 py-3">
                                         {{ $job->created_at->format('d/m/Y') }}
                                     </td>
@@ -108,27 +124,44 @@
                                     </td>
                                     <td class="border-b border-indigo-200 px-5 py-3">
                                         {{ $days }} ngày
-                                        <span class="ml-2 font-semibold {{ $statusColor }}">{{ $status }}</span>
+                                    </td>
+                                    <td class="border-b border-indigo-200 px-5 py-3">
+                                        <span class="font-semibold {{ $statusColor }}">{{ $status }}</span>
                                     </td>
                                 </tr>
                             @endforeach
-                        @else
-                            <tr class="hover:bg-indigo-50 transition">
-                                <td class="border-b border-indigo-200 px-5 py-3">{{ $index + 1 }}</td>
-                                <td class="border-b border-indigo-200 px-5 py-3">{{ $job->title }}</td>
-                                <td class="border-b border-indigo-200 px-5 py-3">
-                                    <span
-                                        class="px-3 py-1 rounded-full text-white {{ $job->type === 'manager' ? 'bg-blue-600' : 'bg-green-600' }}">
-                                        {{ $job->type === 'manager' ? 'Quản lý' : 'Chuyên viên' }}
-                                    </span>
-                                </td>
-                                <td class="border-b border-indigo-200 px-5 py-3">
-                                    {{ $job->created_at->format('d/m/Y') }}
-                                </td>
-                                <td class="border-b border-indigo-200 px-5 py-3 text-gray-500 italic">Chưa offer</td>
-                                <td class="border-b border-indigo-200 px-5 py-3 text-gray-500 italic">❌ Chưa offer</td>
-                            </tr>
-                        @endif
+                       @else
+    @php
+        $today = now();
+        $days = $job->created_at->diffInDays($today);
+
+        $isManager = $job->type === 'manager';
+        $threshold = $isManager ? 60 : 45;
+
+        $status = $days > $threshold ? '⏱ Chậm' : '🕒 Đang tiến hành';
+        $statusColor = $days > $threshold ? 'text-red-600' : 'text-gray-500 italic';
+    @endphp
+    <tr class="hover:bg-indigo-50 transition">
+        <td class="border-b border-indigo-200 px-5 py-3">{{ $index + 1 }}</td>
+        <td class="border-b border-indigo-200 px-5 py-3">{{ $job->title }}</td>
+        <td class="border-b border-indigo-200 px-5 py-3">
+            <span class="px-3 py-1 rounded-full text-white {{ $isManager ? 'bg-blue-600' : 'bg-green-600' }}">
+                {{ $isManager ? 'Quản lý' : 'Chuyên viên' }}
+            </span>
+        </td>
+        <td class="border-b border-indigo-200 px-5 py-3">
+            {{ $job->created_at->format('d/m/Y') }}
+        </td>
+        <td class="border-b border-indigo-200 px-5 py-3 text-gray-500 italic">--</td>
+        <td class="border-b border-indigo-200 px-5 py-3 text-gray-500 italic">
+           --
+        </td>
+        <td class="border-b border-indigo-200 px-5 py-3">
+            <span class="font-semibold {{ $statusColor }}">{{ $status }}</span>
+        </td>
+    </tr>
+@endif
+
                     @endforeach
                 </tbody>
             </table>
@@ -147,7 +180,7 @@
         });
     </script>
 
-    {{-- Style in trang (nút, background v.v) --}}
+    {{-- Style in trang --}}
     <style>
         @media print {
             body * {
