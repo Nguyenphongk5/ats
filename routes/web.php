@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CvController;
 use App\Http\Controllers\ApplyController;
+use App\Http\Controllers\JobStatisticController;
 
 
 use Illuminate\Container\Attributes\Auth;
@@ -81,15 +82,11 @@ Route::get('/jobs/company/{company}', [JobController::class, 'jobsByCompany']);
 Route::get('/companies/{company}/jobs/open', [JobController::class, 'showOpen'])->name('jobs.open');
 Route::get('/companies/{company}/jobs/closed', [JobController::class, 'showClosed'])->name('jobs.closed');
 
-Route::get('/jobs/{job}/apply', [CvController::class, 'apply'])->name('jobs.apply');
-
-Route::get('/jobs/{job}/apply', [CvController::class, 'applyForm'])->name('jobs.applyForm');
+Route::get('/jobs/{job}/apply', [CvController::class, 'applyForm'])->name('jobs.apply');
 
 Route::post('/jobs/{job}/apply', [CvController::class, 'submitApplication'])->name('jobs.apply');
-Route::post('/jobs/{jobs}/apply', [CvController::class, 'submitApplication'])->name('jobs.submitApplication');
 // web.php
 Route::get('/cv/{id}/view', [CvController::class, 'view'])->name('cv.view');
-Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNote');
 Route::post('/cv/{id}/note', [CvController::class, 'saveNote'])->name('cv.saveNote');
 
 
@@ -116,10 +113,12 @@ Route::post('/cv/{cv}/interview2', [JobController::class, 'markInterview2'])->na
 Route::post('/cv/{cv}/offer', [JobController::class, 'markOffer'])->name('cv.offer');
 Route::post('/cv/{cv}/hand', [JobController::class, 'markHand'])->name('cv.hand');
 
+Route::post('/cv/{cv}/update-apply', [CvController::class, 'updateApply'])->name('cv.updateApply');
 Route::post('/cv/{cv}/interview1', [CvController::class, 'markInterview1'])->name('cv.interview1');
 Route::post('/cv/{cv}/interview2', [CvController::class, 'markInterview2'])->name('cv.interview2');
 Route::post('/cv/{cv}/offer', [CvController::class, 'markOffer'])->name('cv.offer');
 Route::post('/cv/{cv}/hand', [CvController::class, 'markHand'])->name('cv.hand');
+
 
 Route::get('/cvs/job/{job}', [CVController::class, 'indexByJob'])->name('cv.index.job');
 
@@ -164,6 +163,45 @@ Route::prefix('pool')->group(function () {
 Route::get('/pool/function/{id}', [FunctionController::class, 'show'])->name('pool.function.show');
 
 
-use App\Http\Controllers\JobStatisticController;
 
 Route::get('/statistics', [JobStatisticController::class, 'index'])->name('jobs.statistics');
+Route::post('/jobs/{job}/apply', [CvController::class, 'submitApplication'])->name('jobs.submitApplication');
+
+// Pool
+Route::get('/pool', [PoolController::class, 'index'])->name('pool.index');
+Route::get('/pool/create', [PoolController::class, 'createCxo'])->name('pool.create');
+Route::post('/pool/store', [PoolController::class, 'storeCxo'])->name('pool.store');
+Route::get('/pool/{id}', [PoolController::class, 'showCxo'])->name('pool.show');
+
+// Apply for pool
+Route::get('/pool/{cxoId}/apply', [PoolController::class, 'applyForPool'])->name('pool.apply');
+Route::post('/pool/{cxoId}/submit', [PoolController::class, 'submitForPool'])->name('pool.submit');
+
+// ✅ Danh sách CV của Pool
+Route::get('/pool/{cxoId}/cvs', [PoolController::class, 'listPoolCvs'])->name('pool.cvs');
+Route::get('/funnel', [DashboardController::class, 'funnel'])->name('funnel');
+// routes/web.php
+Route::get('/dashboard/funnel-data', [DashboardController::class, 'getFunnelData'])->name('dashboard.funnel-data');
+Route::get('/dashboard/funnel-data', [DashboardController::class, 'funnel'])->name('dashboard.funnel');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/funnel', [DashboardController::class, 'funnel'])->name('dashboard.funnel');
+
+Route::get('/jobs/create', [JobController::class, 'create'])->name('jobs.create');
+Route::post('/jobs', [JobController::class, 'store'])->name('jobs.store');
+
+
+Route::prefix('pool')->group(function () {
+    Route::get('/', [PoolController::class, 'index'])->name('pool.index');
+
+
+    // CV theo Function
+    Route::get('/function/{id}/apply', [PoolController::class, 'applyForFunction'])->name('pool.function.apply');
+    Route::post('/function/{id}/submit', [PoolController::class, 'submitForFunction'])->name('pool.function.submit');
+
+});
+Route::get('/pool/function/create', [PoolController::class, 'createFunction'])->name('pool.function.create');
+Route::get('/pool/function/create', [PoolController::class, 'createFunction'])->name('pool.function_create');
+Route::post('/pool/function/store', [PoolController::class, 'storeFunction'])->name('pool.function_store');
+Route::get('/pool/function/{functionId}/apply', [PoolController::class, 'applyForFunction'])->name('pool.function.apply');
+Route::get('/pool/function/{functionId}/cvs', [PoolController::class, 'listFunctionCvs'])->name('pool.function.cvs');
+Route::get('/pool/{cxo}/cvs', [CvController::class, 'listPoolCvs'])->name('pool.cxo.cvs');

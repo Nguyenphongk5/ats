@@ -164,9 +164,11 @@ public function update(Request $request, Job $job)
     $validated = $request->validate([
         'title' => 'required|string|max:255',           // Tiêu đề là bắt buộc
         'description' => 'nullable|string',             // Mô tả có thể để trống
-        'start_date' => 'required|date',                // Ngày bắt đầu
+        'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         'company_id' => 'required|exists:companies,id', // Công ty phải tồn tại
-        // 'status' => 'required|in:open,closed',          // Trạng thái: đang mở / đã đóng
+        // 'status' => 'required|in:open,closed',
+        'vacancy' => 'required|integer|min:1', // Số lượng tuyển dụng, tối thiểu 1
         'type' => 'required|in:manager,specialist',     // Loại job: quản lý / chuyên viên
     ]);
 
@@ -175,8 +177,10 @@ public function update(Request $request, Job $job)
         'title' => $validated['title'],
         'description' => $validated['description'] ?? null,
         'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
         'company_id' => $validated['company_id'],
-        // 'status' => $validated['status'],
+        // 'status' => $validated['status'],\
+        'vacancy' => $validated['vacancy'],
         'type' => $validated['type'],
     ]);
 
@@ -256,8 +260,8 @@ public function update(Request $request, Job $job)
             ->where('status', $status)
             ->where('type', 'specialist') // sửa position -> type
             ->get();
-
-        return view('jobs.status', compact('company', 'managerJobs', 'specialistJobs', 'status'));
+    $isCmcCorp = $company->id == 1;
+        return view('jobs.status', compact('isCmcCorp','company', 'managerJobs', 'specialistJobs', 'status'));
     }
 
     public function showOpen($companyId)

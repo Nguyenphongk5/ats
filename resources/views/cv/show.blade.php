@@ -13,10 +13,20 @@
                         <p class="text-muted">Ngày nộp: {{ $cv->created_at->format('d/m/Y H:i') }}</p>
                     </div>
                     <div class="mb-4">
-                        <h5>Thông tin Job</h5>
-                        <p><strong>Tên Job:</strong> {{ $cv->job->name }}</p>
-                        <p><strong>Mô tả:</strong> {{ $cv->job->description }}</p>
-                        <p><strong>Thời gian:</strong> Từ {{ $cv->job->open_date }} đến {{ $cv->job->close_date }}</p>
+                        @if($cv->job)
+                            <h5>Thông tin Job</h5>
+                            <p><strong>Tên Job:</strong> {{ $cv->job->title ?? $cv->job->name ?? 'Không xác định' }}</p>
+                            <p><strong>Mô tả:</strong> {{ $cv->job->description ?? 'Không có mô tả' }}</p>
+                            @if(isset($cv->job->open_date) && isset($cv->job->close_date))
+                                <p><strong>Thời gian:</strong> Từ {{ $cv->job->open_date }} đến {{ $cv->job->close_date }}</p>
+                            @endif
+                        @elseif($cv->cxo)
+                            <h5>Thông tin Pool</h5>
+                            <p><strong>Pool:</strong> {{ $cv->cxo->position }}</p>
+                        @else
+                            <h5>Thông tin</h5>
+                            <p><strong>Loại:</strong> Không xác định</p>
+                        @endif
                     </div>
                     <div class="text-center">
                         <a href="{{ asset('storage/' . $cv->file_path) }}" target="_blank" class="btn btn-primary">Xem CV</a>

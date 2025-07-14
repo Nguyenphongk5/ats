@@ -16,6 +16,8 @@
 
     <form action="{{ route('pool.store') }}" method="POST">
         @csrf
+
+        {{-- Chức vụ --}}
         <label for="position" class="block mb-2 font-semibold text-gray-700">Chức vụ (Position)</label>
         <input
             type="text"
@@ -27,6 +29,27 @@
             placeholder="Nhập tên chức vụ CxO"
         >
 
+        {{-- Mô tả --}}
+        <label for="description" class="block mb-2 font-semibold text-gray-700">Mô tả</label>
+        <textarea
+            name="description"
+            id="description"
+            class="w-full px-3 py-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Nhập mô tả ngắn"
+        >{{ old('description') }}</textarea>
+
+        {{-- Trạng thái --}}
+        <label for="status" class="block mb-2 font-semibold text-gray-700">Trạng thái</label>
+        <select
+            name="status"
+            id="status"
+            class="w-full px-3 py-2 border rounded mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+            <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Đang hoạt động</option>
+            <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Ngưng hoạt động</option>
+        </select>
+
+        {{-- Nút Submit --}}
         <button
             type="submit"
             class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"

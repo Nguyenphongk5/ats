@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('function_models', function (Blueprint $table) {
-            $table->id();
-        $table->string('name');
-        $table->timestamps();
+        Schema::table('cvs', function (Blueprint $table) {
+            //
+              $table->unsignedBigInteger('function_id')->nullable()->after('cxo_id');
         });
     }
 
@@ -23,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('function_models');
+        Schema::table('cvs', function (Blueprint $table) {
+            //
+        });
     }
 };

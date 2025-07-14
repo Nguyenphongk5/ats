@@ -8,6 +8,7 @@ class Cv extends Model
 {
     protected $fillable = [
         'job_id',
+    'cxo_id',
     'user_id',
     'full_name',
     'birth_year',
@@ -42,4 +43,13 @@ class Cv extends Model
     'offer_date' => 'datetime',
     'hand_date' => 'datetime',
 ];
+public function cxo()
+{
+    return $this->belongsTo(Cxo::class);
+}
+public function function()
+{
+    return $this->belongsTo(\App\Models\FunctionModel::class, 'function_id');
+}
+
 }

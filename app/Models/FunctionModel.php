@@ -12,10 +12,10 @@ class FunctionModel extends Model
 
     protected $table = 'function_models';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'description', 'status'];
     public function jobs()
 {
-    return $this->hasMany(FunctionJob::class, 'function_model_id');
+    return $this->hasMany(FunctionJob::class, 'function_id');
 }
 
 }

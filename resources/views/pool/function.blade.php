@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
 <x-slot name="header">
@@ -36,4 +36,4 @@
         </div>
     </div>
 </div>
-@endsection
+@endsection --}}

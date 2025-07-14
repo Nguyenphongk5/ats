@@ -3,7 +3,18 @@
 @section('content')
 <form action="{{ route('cv.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
-    <input type="hidden" name="job_id" value="{{ $job->id }}">
+  {{-- @if ($jobId)
+            <input type="hidden" name="job_id" value="{{ $jobId }}">
+        @endif
+
+        @if ($cxoId)
+            <input type="hidden" name="cxo_id" value="{{ $cxoId }}">
+        @endif --}}
+             <input type="hidden" name="job_id" value="{{ $jobId }}">
+        <input type="hidden" name="cxo_id" value="{{ $cxoId }}">
+
+
+
 
     <div class="mb-4">
         <label for="full_name">👤 Họ tên <span class="text-danger">*</span></label>

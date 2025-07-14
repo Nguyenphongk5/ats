@@ -1,121 +1,187 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="py-5" style="max-width: 1200px; margin: 0 auto; padding-left: 15px; padding-right: 15px;">
+<div class="container-fluid" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); min-height: 100vh; padding: 2rem 0;">
+    <div class="container" style="max-width: 1100px;">
 
-        {{-- 🟦 Tiêu đề công việc --}}
-        <h2 class="mb-5 fw-bold text-primary" style="font-size: 1.85rem; letter-spacing: 0.03em;">
-            {{ $job->title }}
-        </h2>
+        {{-- Header Card --}}
+        <div class="card border-0 shadow-lg mb-4" style="border-radius: 20px; overflow: hidden;">
+            <div class="card-body p-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="display-6 fw-bold mb-3" style="font-family: 'Inter', sans-serif; letter-spacing: -0.02em;">
+                            {{ $job->title }}
+                        </h1>
+                        <div class="d-flex flex-wrap gap-3 mb-3">
+                            <div class="badge bg-white text-dark px-3 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                {{ $job->start_date ? $job->start_date->format('d/m/Y') : 'Chưa cập nhật' }}
+                            </div>
+                            <div class="badge bg-white text-dark px-3 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-clock me-1"></i>
+                                {{ $job->end_date ? $job->end_date->format('d/m/Y') : 'Chưa cập nhật' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="d-flex justify-content-end gap-3 mb-3">
+                            <div class="text-center">
+                                <div class="h2 fw-bold mb-0">{{ $job->vacancy }}</div>
+                                <small class="opacity-75">Headcounts</small>
+                            </div>
+                            <div class="text-center">
+                                <span class="badge {{ $job->status === 'open' ? 'bg-success' : 'bg-danger' }} px-4 py-3 rounded-pill fs-6">
+                                    {{ $job->status === 'open' ? 'Open' : 'Closed' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        {{-- ✅ Hiển thị thông báo khi tải CV thành công --}}
+        {{-- Success Alert --}}
         @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show rounded shadow-sm mb-4" role="alert"
-                style="font-size: 0.9rem;">
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert"
+                style="border-radius: 15px; background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
+                <i class="bi bi-check-circle-fill me-2"></i>
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
 
-        {{-- 📅 Thời gian ứng tuyển --}}
-        <div class="mb-4" style="font-size: 1rem;">
-            <h6 class="fw-semibold text-secondary mb-2">⏳ Thời gian ứng tuyển</h6>
-            <p class="text-muted mb-3">
-                {{-- Nếu có ngày thì hiển thị, không thì báo "Chưa cập nhật" --}}
-                {{ $job->start_date ? $job->start_date->format('d/m/Y') : 'Chưa cập nhật' }}
-            </p>
-            {{-- Số lượng cần tuyển --}}
-<div class="d-flex align-items-center gap-2">
-    <span class="fw-semibold text-secondary">Headcounts: </span>
-    <span class="badge bg-info text-dark px-3 py-2 rounded-pill">
-        {{ $job->vacancy }}
-    </span>
-</div>
-
-{{-- Trạng thái công việc --}}
-<div class="d-flex align-items-center gap-2 mt-2">
-    <span class="fw-semibold text-secondary">Status: </span>
-    <span class="badge {{ $job->status === 'open' ? 'bg-success' : 'bg-danger' }} px-3 py-2 rounded-pill">
-        {{ $job->status === 'open' ? 'Open' : 'Closed' }}
-    </span>
-</div>
-    <br>
-            {{-- 📊 Các nút trạng thái ứng viên cùng số lượng --}}
-            <div class="d-flex flex-wrap gap-3">
-                {{-- Số lượng CV đã nộp --}}
-                <div class="d-flex align-items-center gap-2">
-                    <button type="button"
-                        class="btn btn-outline-primary btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm d-flex align-items-center">
-                        Apply
-                        <span class="badge bg-secondary text-white ms-2">
-                            {{ $job->cvs_count ?? $job->cvs()->count() }}
-                        </span>
-                    </button>
+        <div class="row">
+            {{-- Main Content --}}
+            <div class="col-lg-8">
+                {{-- Statistics Cards --}}
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-body text-center text-white p-3">
+                                <div class="h4 fw-bold mb-1">{{ $job->cvs_count ?? $job->cvs()->count() }}</div>
+                                <div class="small opacity-75">Apply</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                            <div class="card-body text-center text-dark p-3">
+                                <div class="h4 fw-bold mb-1">{{ $job->qualified_count ?? 0 }}</div>
+                                <div class="small opacity-75">Qualify</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                            <div class="card-body text-center text-dark p-3">
+                                <div class="h4 fw-bold mb-1">{{ $job->interview1_count ?? 0 }}</div>
+                                <div class="small opacity-75">Interview 1</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);">
+                            <div class="card-body text-center text-dark p-3">
+                                <div class="h4 fw-bold mb-1">{{ $job->interview2_count ?? 0 }}</div>
+                                <div class="small opacity-75">Interview 2</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {{-- Số lượng đã qualify --}}
-                <button type="button" class="btn btn-outline-secondary btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-                    style="min-width: 110px;">
-                    Qualify
-                    <span id="qualifiedCountSpan" class="badge bg-secondary text-white ms-2">
-                        {{ $job->qualified_count ?? 0 }}
-                    </span>
-                </button>
+                {{-- More Statistics --}}
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);">
+                            <div class="card-body text-center text-white p-3">
+                                <div class="h4 fw-bold mb-1">{{ $job->offer_count ?? 0 }}</div>
+                                <div class="small opacity-75">Offer</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px; background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);">
+                            <div class="card-body text-center text-white p-3">
+                                <div class="h4 fw-bold mb-1">{{ $job->hand_count ?? 0 }}</div>
+                                <div class="small opacity-75">Onboard</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                {{-- Số lượng phỏng vấn vòng 1 --}}
-                <button type="button" class="btn btn-outline-secondary btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-                    style="min-width: 110px;">
-                    Phỏng Vấn 1
-                    <span id="qualifiedCountSpan" class="badge bg-secondary text-white ms-2">
-                        {{ $job->interview1_count ?? 0 }}
-                    </span>
-                </button>
+                {{-- Job Description --}}
+                <div class="card border-0 shadow-sm mb-4" style="border-radius: 20px;">
+                    <div class="card-header bg-transparent border-0 p-4 pb-0">
+                        <h5 class="fw-bold mb-0" style="color: #374151;">
+                            <i class="bi bi-file-text me-2"></i>Job Description
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="job-description"
+                             class="text-muted lh-lg"
+                             style="font-size: 1rem; white-space: pre-line; cursor: pointer; max-height: 6.25rem; overflow: hidden; transition: max-height 0.3s ease;"
+                             onclick="toggleDescription()">
+                            {!! nl2br(e($job->description)) !!}
+                        </div>
+                        <button class="btn btn-link p-0 mt-3 text-decoration-none fw-semibold"
+                                onclick="toggleDescription()"
+                                id="toggle-btn"
+                                style="color: #667eea; font-size: 0.9rem;">
+                            <i class="bi bi-chevron-down me-1"></i>Xem thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                {{-- Số lượng phỏng vấn vòng 2 --}}
-                <button type="button" class="btn btn-outline-info btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-                    style="min-width: 110px;">
-                    Phỏng vấn 2
-                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
-                        {{ $job->interview2_count ?? 0 }}
-                    </span>
-                </button>
+            {{-- Sidebar --}}
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm sticky-top" style="border-radius: 20px; top: 2rem;">
+                    <div class="card-body p-4">
+                        <h6 class="fw-bold mb-4" style="color: #374151;">
+                            <i class="bi bi-gear me-2"></i>Actions
+                        </h6>
 
-                {{-- Số lượng được offer --}}
-                <button type="button" class="btn btn-outline-success btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-                    style="min-width: 110px;">
-                    Offer
-                    <span class="badge bg-primary px-3 py-2 rounded-pill">
-                        {{ $job->offer_count ?? 0 }}
-                    </span>
-                </button>
+                        <div class="d-grid gap-3">
+                            @if ($job->status === 'open')
+                                <a href="{{ route('jobs.apply', $job->id) }}"
+                                   class="btn btn-lg fw-semibold text-white border-0 shadow-sm"
+                                   style="border-radius: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1rem;">
+                                    <i class="bi bi-plus-circle me-2"></i>Add CV
+                                </a>
+                            @endif
 
-                {{-- Số lượng đã nhận việc (hand) --}}
-                <button type="button" class="btn btn-outline-dark btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-                    style="min-width: 110px;">
-                    Onboard
-                    <span class="badge bg-dark px-3 py-2 rounded-pill">
-                        {{ $job->hand_count ?? 0 }}
-                    </span>
-                </button>
+                            <a href="{{ route('cv.index.job', $job->id) }}"
+                               class="btn btn-lg btn-outline-primary fw-semibold border-2 shadow-sm"
+                               style="border-radius: 15px; padding: 1rem; border-color: #667eea; color: #667eea;">
+                                <i class="bi bi-list-ul me-2"></i>List CV
+                            </a>
+                        </div>
+
+                        {{-- Job Info --}}
+                        <div class="mt-4 pt-4 border-top">
+                            <h6 class="fw-bold mb-3" style="color: #374151;">
+                                <i class="bi bi-info-circle me-2"></i>Job Information
+                            </h6>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="text-center p-3 rounded-3" style="background: #f8fafc;">
+                                        <div class="h6 fw-bold mb-1" style="color: #374151;">Open Date</div>
+                                        <div class="small text-muted">{{ $job->start_date ? $job->start_date->format('d/m/Y') : 'N/A' }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="text-center p-3 rounded-3" style="background: #f8fafc;">
+                                        <div class="h6 fw-bold mb-1" style="color: #374151;">Close Date</div>
+                                        <div class="small text-muted">{{ $job->end_date ? $job->end_date->format('d/m/Y') : 'N/A' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-
-        {{-- 📝 Mô tả công việc --}}
-       @php
-    $isCollapsed = true;
-@endphp
-
-<div
-    id="job-description"
-    class="border rounded-3 p-4 mb-5 shadow-sm text-gray-800 bg-[#fafafa]"
-    style="font-size: 1rem; white-space: pre-line; color: #333; cursor: pointer; max-height: 6.25rem; overflow: hidden; transition: max-height 0.3s ease;"
-    onclick="toggleDescription()"
->
-    {!! nl2br(e($job->description)) !!}
-</div>
-
-<div class="mb-5 text-indigo-600 cursor-pointer font-semibold select-none" onclick="toggleDescription()" id="toggle-btn">
-    Xem thêm ▼
+    </div>
 </div>
 
 <script>
@@ -126,38 +192,33 @@
     function toggleDescription() {
         if (collapsed) {
             // Mở rộng
-            desc.style.maxHeight = desc.scrollHeight + "px"; // chiều cao nội dung thực tế
-            btn.textContent = "Thu gọn ▲";
+            desc.style.maxHeight = desc.scrollHeight + "px";
+            btn.innerHTML = '<i class="bi bi-chevron-up me-1"></i>Thu gọn';
         } else {
             // Thu gọn
-            desc.style.maxHeight = "6.25rem"; // giới hạn 5 dòng
-            btn.textContent = "Xem thêm ▼";
+            desc.style.maxHeight = "6.25rem";
+            btn.innerHTML = '<i class="bi bi-chevron-down me-1"></i>Xem thêm';
         }
         collapsed = !collapsed;
     }
 </script>
 
-
-        {{-- 🎯 Nút hành động --}}
-        <div class="d-flex justify-content-start gap-3 flex-wrap align-items-center">
-            {{-- Nút ứng tuyển --}}
-           @if ($job->status === 'open')
-    <a href="{{ route('jobs.apply', $job->id) }}"
-        class="btn btn-success btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-        style="font-size: 0.95rem;">
-        <i class="bi bi-pencil-square me-2"></i> Add CV  
-    </a>
-@endif
-
-
-            {{-- Nút xem danh sách CV --}}
-           <a href="{{ route('cv.index.job', $job->id) }}"
-   class="btn btn-outline-primary btn-sm px-4 py-2 fw-semibold rounded-pill shadow-sm"
-   style="font-size: 0.95rem; transition: color 0.3s ease, border-color 0.3s ease;">
-   <i class="bi bi-card-list me-2"></i> List CV
-</a>
-
-        </div>
-
-    </div>
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-2px);
+    }
+    .btn {
+        transition: all 0.3s ease;
+    }
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+</style>
 @endsection

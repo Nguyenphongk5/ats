@@ -4,30 +4,40 @@ namespace App\Http\Controllers;
 
 use App\Models\Cv;
 use App\Models\CvNote;
+use App\Models\Cxo;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CvController extends Controller
 {
-public function index(Request $request)
+   public function index(Request $request)
 {
     $jobId = $request->input('job_id');
 
-    $cvsQuery = Cv::with('job')->orderBy('created_at', 'desc');
+    $cvsQuery = Cv::with(['job', 'cxo', 'function'])->orderBy('created_at', 'desc');
 
     if (!empty($jobId)) {
-        $cvsQuery->where('job_id', $jobId);
+        if (str_starts_with($jobId, 'pool_')) {
+            $cxoId = str_replace('pool_', '', $jobId);
+            $cvsQuery->where('cxo_id', $cxoId)->whereNull('job_id');
+        } elseif (str_starts_with($jobId, 'function_')) {
+            $functionId = str_replace('function_', '', $jobId);
+            $cvsQuery->where('function_id', $functionId)->whereNull('job_id');
+        } else {
+            $cvsQuery->where('job_id', $jobId);
+        }
     }
 
-    $cvs = $cvsQuery->get();
-    $cvsGrouped = $cvs->groupBy('job_id');
+    $cvs = $cvsQuery->paginate(12); // Phân trang tại đây
 
-    // Lấy danh sách công việc để dùng trong dropdown lọc
     $jobs = Job::orderBy('title')->get();
+    $cxos = Cxo::orderBy('position')->get();
+    $functions = \App\Models\FunctionModel::orderBy('name')->get();
 
-    return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
+    return view('cv.index', compact('cvs', 'jobs', 'cxos', 'functions', 'jobId'));
 }
+
 
     public function listByJob($jobId)
 {
@@ -44,13 +54,23 @@ public function index(Request $request)
     $cvsGrouped = collect([$job->id => $job->cvs]);
 $jobs = Job::orderBy('title')->get();
 $jobId = $job->id;
+ $cvs = $job->cvs;
+$cvs = Cv::where('job_id', $jobId)->paginate(10); // ✅ paginate()
 
-return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
+return view('cv.index', compact('cvs','cvsGrouped', 'jobs', 'jobId'));
 
 }
+// public function create(Request $request)
+// {
+//     $jobId = $request->job_id;
+//     $cxoId = $request->cxo_id;
+
+//     return view('cv.create', compact('jobId', 'cxoId'));
+// }
+
    public function show($id)
 {
-    $cv = Cv::with('job')->findOrFail($id); // Lấy CV theo ID, kèm job liên quan
+    $cv = Cv::with(['job', 'cxo'])->findOrFail($id); // Lấy CV theo ID, kèm job và cxo liên quan
 
     return view('cv.show', compact('cv')); // Truyền biến $cv sang view
 }
@@ -59,10 +79,12 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
     public function applyForm($jobId)
     {
         $job = Job::findOrFail($jobId);
-        return view('jobs.apply', compact('job'));
+
+        return view('jobs.apply', compact('job',));
     }
 
-    public function submitApplication(Request $request, $jobId)
+
+    public function submitApplication(Request $request, $jobId, )
     {
         $request->validate([
             'full_name' => 'required|string|max:255',
@@ -74,10 +96,12 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
 
         $job = Job::findOrFail($jobId);
 
+
         $filePath = $request->file('cv')->store('cvs', 'public');
 
         Cv::create([
             'job_id' => $job->id,
+
             'user_id' => Auth::id(),
             'full_name' => $request->full_name,
             'birth_year' => $request->birth_year,
@@ -94,7 +118,7 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
         $cvs = Cv::with('job')->orderBy('created_at', 'desc')->get();
         $cvsGrouped = $cvs->groupBy('job_id');
 
-        return view('cv.index', compact('cvsGrouped'));
+        return view('cv.index', compact('cvsGrouped',));
     }
 
     public function view($id)
@@ -131,8 +155,11 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
             $cv->qualified = true;
             $cv->save();
 
-            $cv->job->increment('qualified_count');
-            $cv->job->refresh();
+            // Chỉ tăng count nếu CV thuộc job
+            if ($cv->job) {
+                $cv->job->increment('qualified_count');
+                $cv->job->refresh();
+            }
         }
 
         return redirect()->back()->with('success', 'Ứng viên đã được đánh dấu là đủ điều kiện.');
@@ -153,8 +180,11 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
             $cv->interview1 = true;
             $cv->save();
 
-            $cv->job->increment('interview1_count');
-            $cv->job->refresh();
+            // Chỉ tăng count nếu CV thuộc job
+            if ($cv->job) {
+                $cv->job->increment('interview1_count');
+                $cv->job->refresh();
+            }
         }
 
         return redirect()->back()->with('success', 'Đã cập nhật ngày phỏng vấn 1 và tăng số lượng.');
@@ -174,8 +204,11 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
             $cv->interview2 = true;
             $cv->save();
 
-            $cv->job->increment('interview2_count');
-            $cv->job->refresh();
+            // Chỉ tăng count nếu CV thuộc job
+            if ($cv->job) {
+                $cv->job->increment('interview2_count');
+                $cv->job->refresh();
+            }
         }
 
         return redirect()->back()->with('success', 'Đã cập nhật ngày phỏng vấn 2 và tăng số lượng.');
@@ -195,8 +228,11 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
             $cv->offer = true;
             $cv->save();
 
-            $cv->job->increment('offer_count');
-            $cv->job->refresh();
+            // Chỉ tăng count nếu CV thuộc job
+            if ($cv->job) {
+                $cv->job->increment('offer_count');
+                $cv->job->refresh();
+            }
         }
 
         return redirect()->back()->with('success', 'Đã cập nhật ngày nhận offer và tăng số lượng.');
@@ -216,8 +252,11 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
             $cv->hand = true;
             $cv->save();
 
-            $cv->job->increment('hand_count');
-            $cv->job->refresh();
+            // Chỉ tăng count nếu CV thuộc job
+            if ($cv->job) {
+                $cv->job->increment('hand_count');
+                $cv->job->refresh();
+            }
         }
 
         return redirect()->back()->with('success', 'Đã cập nhật ngày nhận việc và tăng số lượng.');
@@ -229,6 +268,73 @@ return view('cv.index', compact('cvsGrouped', 'jobs', 'jobId'));
 
 
     return view('cv.status', compact('cvs'));
+}
+
+    public function applyForPool($cxoId)
+{
+    $cxo = Cxo::findOrFail($cxoId);
+    return view('cv.apply_pool', compact('cxo'));
+}
+
+// Xử lý submit CV cho Pool
+public function submitForPool(Request $request, $cxoId)
+{
+    $request->validate([
+        'full_name' => 'required|string|max:255',
+        'birth_year' => 'required|integer|between:1900,2100',
+        'last_company' => 'nullable|string|max:255',
+        'last_position' => 'nullable|string|max:255',
+        'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
+    ]);
+
+    $cxo = Cxo::findOrFail($cxoId);
+    $filePath = $request->file('cv')->store('cvs', 'public');
+
+    Cv::create([
+        'job_id' => null, // KHÔNG gắn job
+        'cxo_id' => $cxo->id,
+        'user_id' => Auth::id(),
+        'full_name' => $request->full_name,
+        'birth_year' => $request->birth_year,
+        'last_company' => $request->last_company,
+        'last_position' => $request->last_position,
+        'file_path' => $filePath,
+    ]);
+
+    return redirect()->route('pool.cvs', ['cxoId' => $cxo->id])->with('success', 'Nộp CV vào Pool thành công!');
+}
+    public function listPoolCvs($cxoId)
+{
+    $cxo = \App\Models\Cxo::findOrFail($cxoId);
+
+    $cvs = Cv::where('cxo_id', $cxo->id)
+             ->whereNull('job_id') // Chỉ lấy CV không gắn Job
+             ->orderBy('created_at', 'desc')
+             ->get();
+
+    return view('cv.list_pool', compact('cxo', 'cvs'));
+}
+    public function updateApply(Request $request, Cv $cv)
+{
+    $request->validate([
+        'created_at' => 'required|date',
+    ]);
+
+    $cv->created_at = $request->created_at;
+    $cv->save();
+
+    return back()->with('success', 'Ngày Apply đã được cập nhật.');
+}
+public function listFunctionCvs($functionId)
+{
+    $function = \App\Models\FunctionModel::findOrFail($functionId);
+
+    $cvs = Cv::where('function_id', $function->id)
+             ->whereNull('job_id') // Chỉ lấy CV không gắn Job
+             ->orderBy('created_at', 'desc')
+             ->get();
+
+    return view('cv.list_function', compact('function', 'cvs'));
 }
 
 

@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class FunctionJob extends Model
 {
     //
-    public function functionModel()
+     protected $fillable = ['function_id', 'title', 'description', 'status'];
+ public function functionModel()
 {
-    return $this->belongsTo(FunctionModel::class, 'function_model_id');
+    return $this->belongsTo(FunctionModel::class, 'function_id'); // ✅ sửa lại để khớp
 }
+
 
 }

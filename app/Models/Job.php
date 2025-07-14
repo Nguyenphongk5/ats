@@ -13,6 +13,7 @@ class Job extends Model
            'title',
     'description',
     'start_date',
+     'end_date',
     'company_id',
     'status',
     'type',
@@ -22,10 +23,11 @@ class Job extends Model
     ];
 
     // Thêm cast để Laravel tự động chuyển string thành Carbon
-    protected $casts = [
-        'start_date' => 'date',
+   protected $casts = [
+    'start_date' => 'date',
+    'end_date' => 'date',
+];
 
-    ];
 
     // Quan hệ với công ty
     public function company()
